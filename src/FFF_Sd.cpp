@@ -6,7 +6,6 @@
 #include <Arduino.h>
 #include <FFF_Types.h>
 #include <FFF_Settings.h>
-#include <string.h>
 
 bool FFF_SDReader_connected = false;
 
