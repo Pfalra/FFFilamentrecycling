@@ -3,6 +3,9 @@
 
 #define NL "\r\n"
 
+
+#define SERIAL_BAUDRATE 250000
+
 /* OLED */
 #define OLED_ADDR 0x3C
 #define OLED_WIDTH_PX 128
@@ -11,6 +14,12 @@
 /* ADC */
 #define EXT_ADC_ADDR 0x48
 #define EXT_ADC_TEMP_PIN 0
+
+
+/* UDP */
+#define UDP_PORT 666 // Doom intensifies
+#define UDP_PBUF_SIZE 255
+#define UDP_CONFIRM "OK" NL
 
 
 /* PIN ASSIGNMENTS */
@@ -32,7 +41,7 @@
 
 /* TASK INTERVALS */
 #define OLED_UPDATE_INTERVAL_MS         500
-#define UDP_HANDLE_INTERVAL_MS          200
+#define UDP_HANDLE_INTERVAL_MS          400
 #define SD_LOG_INTERVAL_MS              1000
 #define PID_TEMP_INTERVAL_MS            1000
 #define PID_DIAMETER_INTERVAL_MS        1000
