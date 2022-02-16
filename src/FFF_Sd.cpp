@@ -6,6 +6,7 @@
 #include <Arduino.h>
 #include <FFF_Types.h>
 #include <FFF_Settings.h>
+#include <string.h>
 
 bool FFF_SDReader_connected = false;
 
@@ -68,6 +69,7 @@ bool FFF_SD_Init(FFF_Sdmode mode)
   } 
 }
 
+
 FFF_ModStatus FFF_getSDStatus()
 {
   sdcard_type_t cardType = SD.cardType();
@@ -104,19 +106,20 @@ void FFF_reportSDEvent()
 }
 
 
-bool FFF_SD_listFiles(fs::FS &fs, void* (printFuncPtr)(const char*))
+/* PrintFuncPtr for optional future use for printing to another interface */
+void FFF_SD_listFiles(void* (printFuncPtr)(const char*))
 {
   const char* dir = "/";
-  File root = fs.open(dir);
+  File root = SD.open(dir);
 
   if(!root){
     printFuncPtr("Failed to open directory");
-    return false;
+    return;
   }
 
   if(!root.isDirectory()){
     printFuncPtr("Could not open root dir");
-    return false;
+    return;
   }
 
   File file = root.openNextFile();
@@ -129,95 +132,40 @@ bool FFF_SD_listFiles(fs::FS &fs, void* (printFuncPtr)(const char*))
   }
 }
 
-void readFile(fs::FS &fs, const char * path){
-  Serial.printf("Reading file: %s\n", path);
 
-  File file = fs.open(path);
+void FFF_SD_openLogFile(String fileName)
+{
+  File file = SD.open("/" + fileName, FILE_WRITE);
+  
   if(!file){
-    Serial.println("Failed to open file for reading");
+    Serial.println("Failed to open files for writing");
     return;
-  }
-
-  Serial.print("Read from file: ");
-  while(file.available()){
-    Serial.write(file.read());
   }
   file.close();
 }
 
 
-void writeFile(fs::FS &fs, const char * path, const char * message){
-  Serial.printf("Writing file: %s\n", path);
+void FFF_SD_appendLineToLogFile(String fileName, String line)
+{
+  char lineArr[64];
 
-  File file = fs.open(path, FILE_WRITE);
-  if(!file){
-    Serial.println("Failed to open file for writing");
-    return;
-  }
-  if(file.print(message)){
-    Serial.println("File written");
-  } else {
-    Serial.println("Write failed");
-  }
-  file.close();
-}
-
-
-void appendFile(fs::FS &fs, const char * path, const char * message){
-  Serial.printf("Appending to file: %s\n", path);
-
-  File file = fs.open(path, FILE_APPEND);
+  File file = SD.open("/" + fileName, FILE_APPEND);
   if(!file){
     Serial.println("Failed to open file for appending");
     return;
   }
-  if(file.print(message)){
-      Serial.println("Message appended");
-  } else {
-    Serial.println("Append failed");
-  }
-  file.close();
-}
 
+  line += NL;
+  line.toCharArray(lineArr, line.length());
 
-void testFileIO(fs::FS &fs, const char * path){
-  File file = fs.open(path);
-  static uint8_t buf[512];
-  size_t len = 0;
-  uint32_t start = millis();
-  uint32_t end = start;
-  if(file){
-    len = file.size();
-    size_t flen = len;
-    start = millis();
-    while(len){
-      size_t toRead = len;
-      if(toRead > 512){
-        toRead = 512;
-      }
-      file.read(buf, toRead);
-      len -= toRead;
-    }
-    end = millis() - start;
-    Serial.printf("%u bytes read for %u ms\n", flen, end);
-    file.close();
-  } else {
-    Serial.println("Failed to open file for reading");
+  if (file.print(lineArr))
+  {
+    Serial.println("Line appended");
+  } 
+  else 
+  {
+    Serial.println("Failed to append line");
   }
 
-
-  file = fs.open(path, FILE_WRITE);
-  if(!file){
-    Serial.println("Failed to open file for writing");
-    return;
-  }
-
-  size_t i;
-  start = millis();
-  for(i=0; i<2048; i++){
-    file.write(buf, 512);
-  }
-  end = millis() - start;
-  Serial.println("SD test successful!");
   file.close();
 }

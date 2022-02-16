@@ -1,12 +1,14 @@
 #ifndef FFF_SETTINGS_H
 #define FFF_SETTINGS_H
 
+#define NL "\r\n"
 
+/* OLED */
 #define OLED_ADDR 0x3C
 #define OLED_WIDTH_PX 128
 #define OLED_HEIGHT_PX 64
 
-
+/* ADC */
 #define EXT_ADC_ADDR 0x48
 #define EXT_ADC_TEMP_PIN 0
 
