@@ -18,6 +18,10 @@
 void CreateAppInitTasks();
 void CreateAppTasks();
 
+void ResumeAppTasks();
+void DeleteAppTasks();
+void SuspendAppTasks();
+
 void InitializeWiFi(void * param);
 void InitializeOther(void * param);
 void InitializeSD(void * param);
@@ -32,6 +36,7 @@ void handleFPGA(void * param);
 
 /* TASK HANDLES */
 TaskHandle_t initWiFiHandle; 
+TaskHandle_t initSDHandle; 
 TaskHandle_t initOtherHandle; 
 TaskHandle_t UdpTaskHandle; 
 TaskHandle_t OledTaskHandle; 
@@ -44,6 +49,19 @@ TaskHandle_t FPGATaskHandle;
 
 
 
+typedef enum 
+{
+    APP_STOPPED,
+    APP_RUNNING,
+    APP_PAUSED
+} AppStatus;
+
+
+AppStatus gAppStatus = APP_STOPPED;
+bool startApp = false;
+bool stopApp = false;
+bool pauseApp = false;
+uint8_t countApp = 0;
 
 // Stepper 
 typedef struct 
@@ -108,20 +126,69 @@ void setup() {
 
 void loop() 
 {
+    if (stopApp)
+    {
+        // Stop Logging 
+
+        // Disable Heater
+
+        DeleteAppTasks();
+        gAppStatus = APP_STOPPED;
+        stopApp = false;
+    }
+
+    if (startApp)
+    {
+        if (gAppStatus == APP_STOPPED)
+        {
+            CreateAppTasks();
+        } 
+        else 
+        {
+            ResumeAppTasks();
+        }
+
+        gAppStatus = APP_RUNNING;
+        startApp = false;
+    }
+
+    if (pauseApp)
+    {
+        SuspendAppTasks();
+    }
+}
+
+
+
+/******************************************/
+/* Task Control */
+/******************************************/
+
+void ResumeAppTasks()
+{
+    vTaskResume(SdLogTaskHandle);
+    vTaskResume(PIDDiameterTaskHandle);
+}
+
+
+void DeleteAppTasks()
+{
+    vTaskDelete(SdLogTaskHandle);
+    vTaskDelete(PIDDiameterTaskHandle);
+    vTaskDelete(PIDTemperatureTaskHandle);
+    vTaskDelete(ADCTaskHandle);
+}
+
+
+void SuspendAppTasks()
+{
+    vTaskSuspend(SdLogTaskHandle);
+    vTaskSuspend(PIDDiameterTaskHandle);
 }
 
 
 void CreateAppTasks()
 {
-    xTaskCreate(
-        handleUdp,   // Function that should be called
-        "UDP Handler",// Name of the task (for debugging)
-        8192,             // Stack size (bytes)
-        NULL,             // Parameter to pass
-        UDP_TASK_PRIO,                // Task priority
-        &UdpTaskHandle
-    );
-
     xTaskCreate(
         handleOled,   // Function that should be called
         "OLED Handler",// Name of the task (for debugging)
@@ -150,7 +217,7 @@ void CreateAppTasks()
         &PIDDiameterTaskHandle
     );
 
-        xTaskCreate(
+    xTaskCreate(
         handleTempPID,   // Function that should be called
         "PID Motor Handler",// Name of the task (for debugging)
         8192,             // Stack size (bytes)
@@ -171,6 +238,7 @@ void CreateAppTasks()
 
 
 }
+
 
 
 void CreateAppInitTasks()
@@ -202,11 +270,21 @@ void CreateAppInitTasks()
         2,                // Task priority
         &initSDHandle
     );
+
+    xTaskCreate(
+        handleUdp,   // Function that should be called
+        "UDP Handler",// Name of the task (for debugging)
+        8192,             // Stack size (bytes)
+        NULL,             // Parameter to pass
+        UDP_TASK_PRIO,                // Task priority
+        &UdpTaskHandle
+    );
 }
 
 
-
-/* Init Task Functions */
+/******************************************/
+/* Init Task Functions */ 
+/******************************************/
 void InitializeWiFi(void * param)
 {
     /* Start WiFi */
@@ -247,8 +325,9 @@ void InitializeSD(void * param)
 }
 
 
-
+/******************************************/
 /* Application Task Functions */
+/******************************************/
 
 void handleUdp(void * param)
 {
@@ -320,7 +399,9 @@ void handleFPGA(void * param)
     }
 }
 
+/******************************************/
 /* Stepper */
+/******************************************/
 void FFF_Stepper_init()
 {
     pinMode(STEPPER_EN_PIN, OUTPUT);
