@@ -34,14 +34,14 @@
 #define STEPPER_EN_PIN      27
 #define EXTRUDER_STEP_PIN   26
 #define PULLER_STEP_PIN     25
-#define WINCH_STEP_PIN      13
+#define WINCH_STEP_PIN      33
 
 #define EMERGENCY_BUTTON_PIN 36
 
-#define SPI_SCK_PIN         18
-#define SPI_CS_PIN_SD       5
-#define SPI_MISO_PIN        19
-#define SPI_MOSI_PIN        23
+#define SPI_SCK_PIN         14
+#define SPI_CS_PIN_SD       15
+#define SPI_MISO_PIN        12
+#define SPI_MOSI_PIN        13
 
 
 /* TASK INTERVALS */

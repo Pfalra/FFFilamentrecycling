@@ -58,10 +58,10 @@ FPGA UART-TX    -> GPIO16 v
 
 Heater          -> GPIO33 v
 
-SD SPI-SCK      -> GPIO18 v
-SD SPI-CS       -> GPIO5 v
-SD SPI-MISO     -> GPIO19 v
-SD SPI-MOSI     -> GPIO23 v
+SD SPI-SCK      -> GPIO14 v
+SD SPI-CS       -> GPIO15 v
+SD SPI-MISO     -> GPIO12 v
+SD SPI-MOSI     -> GPIO13 v
 
 ADC/OLED I²C-SDA    -> GPIO21   v
 ADC/OLED I²C-SCL    -> GPIO22   v
@@ -69,4 +69,4 @@ ADC/OLED I²C-SCL    -> GPIO22   v
 Stepper EN          -> GPIO27 v
 ExtStepper STEP     -> GPIO26 v
 PullStepper STEP    -> GPIO25 v
-WinchStepper STEP   -> GPIO13 v
+WinchStepper STEP   -> GPIO33 v

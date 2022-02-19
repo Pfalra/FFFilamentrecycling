@@ -9,6 +9,8 @@
 
 bool FFF_SDReader_connected = false;
 
+SPIClass sdSpi(HSPI);
+
 bool FFF_SD_Init(FFF_Sdmode mode)
 {
   bool sdInserted = false;
@@ -16,13 +18,14 @@ bool FFF_SD_Init(FFF_Sdmode mode)
   {
     /* Configure basic pins */
     pinMode(SPI_CS_PIN_SD, OUTPUT);
+    sdSpi.begin(SPI_SCK_PIN, SPI_MISO_PIN, SPI_MOSI_PIN, SPI_CS_PIN_SD);
 
-    if (!SD.begin(SPI_CS_PIN_SD))
+    if (!SD.begin(SPI_CS_PIN_SD, sdSpi))
     {
-      Serial.println("ERROR: Was not able to mount SD!");
       /* Show error on screen and neopixel */
       while (!SD.begin(SPI_CS_PIN_SD))
       {
+        Serial.println("ERROR: Was not able to mount SD!");
         vTaskDelay(500);
       }
     }
@@ -65,7 +68,9 @@ bool FFF_SD_Init(FFF_Sdmode mode)
   else if(mode == SD_OVER_SDIO)
   {
     // TODO
-  } 
+  }
+
+  return true; 
 }
 
 
