@@ -23,20 +23,25 @@
 
 
 /* PIN ASSIGNMENTS */
-#define HEATER_OUTPUT_PIN   0
-#define TX_TO_FPGA_PIN      1
-#define SPI_SCK_PIN         2 
-#define RX_TO_FPGA_PIN      3
-#define OLED_SCL_PIN        4
-#define OLED_SDA_PIN        5
-#define SPI_CS_PIN_SD       12
-#define STEPPER_EN_PIN      13
-#define EXTRUDER_STEP_PIN   14
-#define PULLER_STEP_PIN     15
-#define WINCH_STEP_PIN      16
-#define SPI_MISO_PIN        25
-#define SPI_MOSI_PIN        26
+#define HEATER_OUTPUT_PIN   33
+
+#define TX_TO_FPGA_PIN      16
+#define RX_TO_FPGA_PIN      17
+
+#define OLED_SCL_PIN        22
+#define OLED_SDA_PIN        21
+
+#define STEPPER_EN_PIN      27
+#define EXTRUDER_STEP_PIN   26
+#define PULLER_STEP_PIN     25
+#define WINCH_STEP_PIN      13
+
 #define EMERGENCY_BUTTON_PIN 36
+
+#define SPI_SCK_PIN         18
+#define SPI_CS_PIN_SD       5
+#define SPI_MISO_PIN        19
+#define SPI_MOSI_PIN        23
 
 
 /* TASK INTERVALS */

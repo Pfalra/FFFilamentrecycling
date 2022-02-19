@@ -53,20 +53,20 @@ GPIO5 (DEFAULT PUP) // Outputs PWM at Boot
 
 -----------------------------------------------
 ASSIGNMENTS:
-FPGA UART-RX    -> GPIO17
-FPGA UART-TX    -> GPIO16
+FPGA UART-RX    -> GPIO17 v
+FPGA UART-TX    -> GPIO16 v
 
-Heater          -> GPIO33
+Heater          -> GPIO33 v
 
-SD SPI-SCK      -> GPIO18
-SD SPI-CS       -> GPIO5
-SD SPI-MISO     -> GPIO19
-SD SPI-MOSI     -> GPIO23
+SD SPI-SCK      -> GPIO18 v
+SD SPI-CS       -> GPIO5 v
+SD SPI-MISO     -> GPIO19 v
+SD SPI-MOSI     -> GPIO23 v
 
-ADC/OLED I²C-SDA    -> GPIO21
-ADC/OLED I²C-SCL    -> GPIO22
+ADC/OLED I²C-SDA    -> GPIO21   v
+ADC/OLED I²C-SCL    -> GPIO22   v
 
-Stepper EN          -> GPIO27
-ExtStepper STEP     -> GPIO26
-PullStepper STEP    -> GPIO25
-WinchStepper STEP   -> GPIO13
+Stepper EN          -> GPIO27 v
+ExtStepper STEP     -> GPIO26 v
+PullStepper STEP    -> GPIO25 v
+WinchStepper STEP   -> GPIO13 v
