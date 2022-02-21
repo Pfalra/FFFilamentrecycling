@@ -1,0 +1,72 @@
+INPUTS ONLY:
+GPIO34
+GPIO35
+GPIO36
+GPIO39
+
+
+PINS WITH INTERNAL PULL UP:
+GPIO14
+GPIO16
+GPIO17
+GPIO18
+GPIO19
+GPIO21
+GPIO22
+GPIO23
+
+PINS WITHOUT INTERNAL PULL UP:
+GPIO13          x
+GPIO25          x
+GPIO26          x
+GPIO27          x
+GPIO33          x
+
+SERIAL PINS:
+GPIO3 (U0RXD) // DEBUG
+GPIO1 (U0TXD) // DEBUG
+
+GPIO16 (U2RXD)  x
+GPIO17 (U2TXD)  x
+
+I²C:
+GPIO21 (SDA)    x
+GPIO22 (SCL)    x
+
+VSPI:
+GPIO23 (MOSI)   x
+GPIO19 (MISO)   x
+GPIO18 (CLK)    x
+GPIO5 (CS)      x
+
+HSPI:
+GPIO13 (MOSI)
+GPIO12 (MISO) // Boot fail if pulled high
+GPIO14 (CLK) // PWM at boot
+GPIO15 (CS) // PWM at boot
+
+BOOTSTRAP PINS:
+GPIO0 (DEFAULT PUP) 
+GPIO2 (DEFAULT PDOWN)
+GPIO5 (DEFAULT PUP) // Outputs PWM at Boot
+
+
+-----------------------------------------------
+ASSIGNMENTS:
+FPGA UART-RX    -> GPIO17 v
+FPGA UART-TX    -> GPIO16 v
+
+Heater          -> GPIO33 v
+
+SD SPI-SCK      -> GPIO14 v
+SD SPI-CS       -> GPIO15 v
+SD SPI-MISO     -> GPIO12 v
+SD SPI-MOSI     -> GPIO13 v
+
+ADC/OLED I²C-SDA    -> GPIO21   v
+ADC/OLED I²C-SCL    -> GPIO22   v
+
+Stepper EN          -> GPIO27 v
+ExtStepper STEP     -> GPIO26 v
+PullStepper STEP    -> GPIO25 v
+WinchStepper STEP   -> GPIO33 v

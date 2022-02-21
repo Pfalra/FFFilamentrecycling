@@ -249,7 +249,7 @@ void CreateAppInitTasks()
   xTaskCreate(
       InitializeWiFi,    // Function that should be called
       "Initialize WiFi", // Name of the task (for debugging)
-      8192,              // Stack size (bytes)
+      16384,              // Stack size (bytes)
       NULL,              // Parameter to pass
       3,                 // Task priority
       &initWiFiHandle);
@@ -265,7 +265,7 @@ void CreateAppInitTasks()
   xTaskCreate(
       InitializeSD,    // Function that should be called
       "Initialize SD", // Name of the task (for debugging)
-      8192,            // Stack size (bytes)
+      16384,            // Stack size (bytes)
       NULL,            // Parameter to pass
       2,               // Task priority
       &initSDHandle);
@@ -273,7 +273,7 @@ void CreateAppInitTasks()
   xTaskCreate(
       handleUdp,     // Function that should be called
       "UDP Handler", // Name of the task (for debugging)
-      8192,          // Stack size (bytes)
+      16384,          // Stack size (bytes)
       NULL,          // Parameter to pass
       UDP_TASK_PRIO, // Task priority
       &UdpTaskHandle);

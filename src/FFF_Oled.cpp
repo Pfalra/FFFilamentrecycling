@@ -34,7 +34,7 @@ void FFF_Oled_init()
     oled.setTextColor(WHITE);
     oled.setTextSize(3);
     oled.setCursor(1,0);
-    oled.println("Hotty \r\nPlate");
+    oled.println("FFF" NL "Device");
     oled.setTextSize(1);
     oled.println("V0.1");
     oled.display();
