@@ -5,9 +5,10 @@
 
 // #define NULL 0x0
 
-#define MAX_NUM_MODULES 10
-#define MAX_MODNAME_LEN 24
 
+#define NULL_PTR ((void*) 0) 
+#define FALSE 0
+#define TRUE 1
 
 typedef enum FFF_ModStatus_e
 {
@@ -17,6 +18,29 @@ typedef enum FFF_ModStatus_e
     MOD_INIT_RUNNING,
     MOD_FUNCTIONAL
 } FFF_ModStatus;
+
+
+typedef struct FFF_Measurement_s
+{
+    float outputVal; 
+    float scalingCoeff;   
+    uint16_t mean;
+    uint16_t len;
+    uint16_t startIndex;
+    uint16_t endIndex;
+    uint16_t maxIndex;
+    uint16_t minIndex;
+    uint16_t firstLimPass;
+    uint16_t lastLimPass;
+    uint16_t passHyst;
+    uint8_t maxVal;
+    uint8_t minVal;
+    uint8_t analyzed;
+    uint8_t protectFlag;
+    uint8_t* dataPoints;
+} FFF_Measurement;
+
+
 
 
 
