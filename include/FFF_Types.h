@@ -33,6 +33,7 @@ typedef struct FFF_Measurement_s
     uint16_t firstLimPass;
     uint16_t lastLimPass;
     uint16_t passHyst;
+    uint16_t passWidth;
     uint8_t maxVal;
     uint8_t minVal;
     uint8_t analyzed;
