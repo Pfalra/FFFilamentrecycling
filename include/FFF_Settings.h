@@ -6,6 +6,11 @@
 
 #define SERIAL_BAUDRATE 250000
 
+
+/* ANALYZER */
+#define MEANFILTER_ACTIVE       TRUE
+#define MEANFILTER_WEIGHT_KOEFF 10
+
 /* OLED */
 #define OLED_ADDR 0x3C
 #define OLED_WIDTH_PX 128
