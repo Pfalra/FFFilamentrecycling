@@ -5,6 +5,14 @@
 
 void FFF_Oled_init();
 
+void FFF_Oled_updateTemperature(double tempVal);
+
+void FFF_Oled_updateDiameter(double diaVal);
+
+void FFF_Oled_updateDisplay();
+
+void FFF_Oled_clearDisplay();
+
 Adafruit_SSD1306* FFF_Oled_getOLED();
 
 #endif
