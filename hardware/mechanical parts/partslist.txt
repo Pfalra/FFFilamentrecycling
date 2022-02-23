@@ -1,0 +1,61 @@
+parts list
+1. 1x fully assembled All-Metal Hotend Bowden - 3,00 mm
+2. 2x MINEBA stepper motor 17PM-K374BN01CN, 1,8°
+3. 1x extruder connector
+4. 1x extruder mount
+5. 1x extrouder mount counterpart 
+6. 1x Anself Ultra-quiet Mini DC12V 4.5W Micro Brushless Water Oil Pump
+7. 1x PVC tube 9mm
+8. 1x PVC tube 6mm
+9. 1x tube coupling
+10. 1x basin
+11. 1x basin cover
+12. 1x inlet tube
+13. 1x outlet tube
+14. 1x MAX1000 - IoT Maker Board 16 kLE, 32 MByte SDRAM
+15. 1x Toshiba TCD132D CCD
+16. 1x Laser diode 5mW red 650nm 5V
+17. 2x 6x24x9mm u-groove bearing
+18. 1x 6mm round bar
+19. 1x measuring device base
+20. 1x measuring device housing
+21. 2x bearing mount
+22. 2x measuring device spacer
+23. 1x FPGA cover
+24. 1x laser mount 
+25. 2x 6x19x6mm bearing 
+26. 1x filament puller connector
+27. 1x motor mount
+28. 1x motor mount counterpart
+29. 2x pull roll
+30. 1x filament puller driven gear M=2,5 Z=20 
+31. 1x filament puller gear M=2,5 Z=20 
+32. 1x motor gear connector
+33. 1x MINEBA stepper motor 17PM-K077BP01CN, 1,8°
+34. 1x 12mm tube 
+35. 1x filament winder driven gear M=2,5 Z=14
+36. 1x filament winder gear M=2,5 Z=38
+37. 1x filament winder gear counterpart
+38. 1x filament winder tube connector
+39. 1x filament winder base
+40. 1x filament winder stepper motor mount
+41. 1x filament winder stepper motor mount counterpart
+42. 1x ESP32-Wroom DevKit
+43. 1x ADS1115 ADC-Module (HW196)
+44. 1x Micro SD-Module (HW125)
+45. 1x Voltage Translator Joy-It KY-061
+46. 3x A4988 StepStick
+47. 1x IRFZ44N MOSFET
+48. 3x 47µF Capacitor
+49. 1x I^2C OLED Display
+50. 1x 100k NTC
+51. 2x M2,5 nylon nut DIN934 
+52. 2x M2,5 nylon bolt
+53. 2x M2 nylon nut DIN934 
+54. 2x M2 nylon bolt
+55. 8x M3 nut DIN934 
+56. 16x M3 bolt 
+57. 8x M4 nut DIN934 
+58. 8x M4 bolt
+
+
