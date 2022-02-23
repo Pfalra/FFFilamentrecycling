@@ -139,7 +139,7 @@ void FFF_DiaAn_analyze(FFF_Measurement *meas)
             // TODO: Implement if needed
         }
 
-        meas->mean = meas->maxVal - meas->minVal;
+        meas->mean = (meas->maxVal - meas->minVal) / 2;
         meas->analyzed = TRUE;
         return;
     }
@@ -193,7 +193,7 @@ void FFF_DiaAn_analyze(FFF_Measurement *meas)
     }
     else 
     {
-        meas->mean = meas->maxVal - meas->minVal;
+        meas->mean = (meas->maxVal - meas->minVal) / 2;
         meas->passWidth = meas->lastLimPass - meas->firstLimPass;
     }
 
