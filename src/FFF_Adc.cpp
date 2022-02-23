@@ -32,7 +32,7 @@ double FFF_Adc_readTemp()
 {
     const double vcc = 3.3;
     const uint32_t steps = 65536;
-    double res = vcc/65536; // resolution in volts at 0 Gain
+    double res = vcc/(double) 65536; // resolution in volts at 0 Gain
     uint16_t rawTemp = FFF_Adc_readTempRaw();
     return rawTemp * res;
 }

@@ -123,6 +123,8 @@ bool stopApp = false;
 bool pauseApp = false;
 uint8_t countApp = 0;
 
+
+
 void setup()
 {
   /* Start Serial communication */
@@ -173,6 +175,7 @@ void loop()
   if (pauseApp)
   {
     SuspendAppTasks();
+    pauseApp = false;
   }
 }
 
@@ -345,6 +348,26 @@ void handleUdp(void *param)
       Serial.println("Received:");
       Serial.println(udpRecPBuf);
 
+      if (strncmp(udpRecPBuf, UDP_APP_START_CMD, sizeof(UDP_APP_START_CMD)) == 0)
+      {
+        startApp = TRUE;
+        udpConn.write((uint8_t*) UDP_CONFIRM, (size_t) sizeof(UDP_CONFIRM));
+        udpConn.write((uint8_t*) UDP_START_CONFIRM, (size_t) sizeof(UDP_START_CONFIRM));
+      } else if (strncmp(udpRecPBuf, UDP_APP_STOP_CMD, sizeof(UDP_APP_STOP_CMD)) == 0)
+      {
+        stopApp = TRUE;
+        udpConn.write((uint8_t*) UDP_CONFIRM, (size_t) sizeof(UDP_CONFIRM));
+        udpConn.write((uint8_t*) UDP_STOP_CONFIRM, (size_t) sizeof(UDP_STOP_CONFIRM));
+      } else if (strncmp(udpRecPBuf, UDP_APP_PAUSE_CMD, sizeof(UDP_APP_PAUSE_CMD)) == 0)
+      {
+        pauseApp = TRUE;
+        udpConn.write((uint8_t*) UDP_CONFIRM, (size_t) sizeof(UDP_CONFIRM));
+        udpConn.write((uint8_t*) UDP_PAUSE_CONFIRM, (size_t) sizeof(UDP_PAUSE_CONFIRM));
+      } else 
+      {
+
+      }
+
       // Confirm reception
       udpConn.beginPacket(udpConn.remoteIP(), udpConn.remotePort());
       udpConn.write((uint8_t*) UDP_CONFIRM, (size_t) sizeof(UDP_CONFIRM));
@@ -359,7 +382,7 @@ void handleOled(void *param)
 {
   while (1)
   {
-
+    
     vTaskDelay(OLED_UPDATE_INTERVAL_MS);
   }
 }
@@ -396,7 +419,7 @@ void handleADC(void *param)
 {
   while (1)
   {
-
+    hotendTemp = FFF_Adc_readTemp();
     vTaskDelay(ADC_SAMPLE_INTERVAL_MS);
   }
 }
