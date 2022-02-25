@@ -10,6 +10,13 @@
 #define FALSE 0
 #define TRUE 1
 
+typedef enum FFF_AppStatus_e
+{
+  APP_STOPPED,
+  APP_RUNNING,
+  APP_PAUSED
+} FFF_AppStatus;
+
 typedef enum FFF_ModStatus_e
 {
     MOD_HW_NOT_DETECTED,
@@ -49,7 +56,13 @@ typedef struct FFF_Lut_s
 } FFF_Lut;
 
 
-
+typedef struct FFF_Stepper_s
+{
+  uint8_t id;
+  uint8_t stepPin;
+  uint8_t microsteps;
+  double targetSpeed;
+} FFF_Stepper;
 
 
 #endif
