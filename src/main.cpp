@@ -304,7 +304,7 @@ void InitializeOther(void *param)
   FFF_Adc_init();
 
   // Take first value from ADC
-  hotendTemp = FFF_Adc_readTemp();
+  hotendTemp = FFF_Adc_readVolt(EXT_ADC_TEMP_CHANNEL);
 
   /* Initialize Steppers */
   FFF_Stepper_init();
@@ -421,7 +421,7 @@ void handleADC(void *param)
 {
   while (1)
   {
-    hotendTemp = FFF_Adc_readTemp();
+    hotendTemp = FFF_Adc_readVolt(EXT_ADC_TEMP_CHANNEL);
     vTaskDelay(ADC_SAMPLE_INTERVAL_MS);
   }
 }
@@ -430,7 +430,7 @@ void handleFPGA(void *param)
 {
   while (1)
   {
-
+    // Read from Serial2 and analyze the stream
     vTaskDelay(FPGA_CALCULATE_DIAMETER_INTERVAL_MS);
   }
 }

@@ -27,9 +27,10 @@
 
 #define DUMMY_VAL_TEMPERATURE 333
 #define DUMMY_VAL_DIAMETER 1.75
+
 /* ADC */
 #define EXT_ADC_ADDR 0x48
-#define EXT_ADC_TEMP_PIN 0
+#define EXT_ADC_TEMP_CHANNEL 3
 
 
 /* UDP */
