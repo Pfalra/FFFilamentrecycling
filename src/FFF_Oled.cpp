@@ -60,7 +60,7 @@ void FFF_Oled_init()
     oled.setCursor(1,0);
     oled.println("FFF" NL "Device");
     oled.setTextSize(1);
-    oled.println("V0.1");
+    oled.println(FFF_VERSION);
     oled.display();
     Serial.println("Showing Logo");
 

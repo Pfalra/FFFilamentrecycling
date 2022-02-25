@@ -78,7 +78,7 @@ static uint16_t evalLimitPass(FFF_Measurement *meas, uint16_t index)
 
 static uint16_t weightDataProperty(uint16_t oldVal, uint16_t currVal, uint16_t weigthCoeff)
 {
-    currVal = ((uint16_t) MEANFILTER_WEIGHT_KOEFF * ((uint16_t) oldVal) + (uint16_t) currVal ) / ((uint16_t) MEANFILTER_WEIGHT_KOEFF + 1);
+    currVal = ((uint16_t) MEANFILTER_WEIGHT_COEFF * ((uint16_t) oldVal) + (uint16_t) currVal ) / ((uint16_t) MEANFILTER_WEIGHT_COEFF + 1);
     return currVal;
 }
 
@@ -187,8 +187,8 @@ void FFF_DiaAn_analyze(FFF_Measurement *meas)
         // Don't do filtering if mean is zero as this would corrupt the measurement for a few analyzations
         if (oldMean > 0)
         {
-            meas->mean = weightDataProperty(oldMean, meas->mean, MEANFILTER_WEIGHT_KOEFF);
-            meas->passWidth = weightDataProperty(oldPassWidth, meas->passWidth, MEANFILTER_WEIGHT_KOEFF);
+            meas->mean = weightDataProperty(oldMean, meas->mean, MEANFILTER_WEIGHT_COEFF);
+            meas->passWidth = weightDataProperty(oldPassWidth, meas->passWidth, MEANFILTER_WEIGHT_COEFF);
         }
     }
     else 

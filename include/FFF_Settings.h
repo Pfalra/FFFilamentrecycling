@@ -3,13 +3,20 @@
 
 #define NL "\r\n"
 
+#define FFF_VERSION "V0.1"
 
 #define SERIAL_BAUDRATE 250000
 
+#define DELIMITER ";"
+
+#define TARGET_DIAMETER 1.75
+
+#define EXTRUDE_RATE_STEPS_PS 42
 
 /* ANALYZER */
 #define MEANFILTER_ACTIVE       TRUE
-#define MEANFILTER_WEIGHT_KOEFF 10
+#define MEANFILTER_WEIGHT_COEFF 10
+#define DIAMETER_SCALING_COEFF  100
 
 /* OLED */
 #define OLED_ADDR 0x3C

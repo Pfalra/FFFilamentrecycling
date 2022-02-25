@@ -81,7 +81,7 @@ FFF_Stepper WinchStepper;
 
 #pragma region PID
 double filDiameterMm = 0.0;
-double targetDiameterMm = 1.75;
+double targetDiameterMm = TARGET_DIAMETER;
 double pwmFrequency = 0.0;
 
 double kp_mot = 0.0;
@@ -135,7 +135,7 @@ void setup()
 
   /* Initialize OLED */
   FFF_Oled_init();
-  vTaskDelay(1000);
+  vTaskDelay(500);
 
   /* Create tasks for initialization */
   CreateAppInitTasks();
@@ -244,6 +244,8 @@ void CreateAppTasks()
       NULL,          // Parameter to pass
       3,             // Task priority
       &ADCTaskHandle);
+
+  // FPGA Readout missing
 }
 
 void CreateAppInitTasks()
@@ -444,7 +446,7 @@ void FFF_Stepper_init()
   pinMode(PULLER_STEP_PIN, OUTPUT);
   pinMode(WINCH_STEP_PIN, OUTPUT);
   ExtruderStepper.id = 0;
-  ExtruderStepper.targetSpeed = 0;
+  ExtruderStepper.targetSpeed = EXTRUDE_RATE_STEPS_PS;
   ExtruderStepper.stepPin = EXTRUDER_STEP_PIN;
   ExtruderStepper.microsteps = 16;
 
