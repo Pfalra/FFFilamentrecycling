@@ -20,13 +20,16 @@ typedef struct
 
 DisplayLine tempLine;
 DisplayLine diameterLine;
+DisplayLine extVelLine;
+DisplayLine pullVelLine;
 
-DisplayLine* lineArr[] = {&tempLine, &diameterLine, NULL};
+DisplayLine* lineArr[] = {&tempLine, &diameterLine, &extVelLine, &pullVelLine, NULL};
 
 /* Graphics */
 extern const uint8_t myFFFLogo[];
 
 
+// FIXME: This cannot be the most elegant way of handling it 
 void initTextLayout()
 {
     tempLine.lineNum = 0;
@@ -34,6 +37,12 @@ void initTextLayout()
 
     diameterLine.lineNum = 1;
     diameterLine.textSize = 2;
+
+    extVelLine.lineNum = 2;
+    extVelLine.textSize = 1;
+
+    pullVelLine.lineNum = 3;
+    pullVelLine.textSize = 1;
 }
 
 
