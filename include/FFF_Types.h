@@ -5,7 +5,7 @@
 
 // #define NULL 0x0
 
-
+#define MAX_ARRAY_LEN 100
 #define NULL_PTR ((void*) 0) 
 #define FALSE 0
 #define TRUE 1
@@ -52,7 +52,9 @@ typedef struct FFF_Measurement_s
 typedef struct FFF_Lut_s
 {
     int* tempPtr;
-    double* resPtr; 
+    float* resPtr; 
+    float scalingFac;
+    float volts[100];
 } FFF_Lut;
 
 

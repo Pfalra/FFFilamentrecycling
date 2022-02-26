@@ -59,7 +59,8 @@ TaskHandle_t FPGATaskHandle;
 
 // Prototypes
 void FFF_Udp_init();
-double LookupTemperature(double val, FFF_Lut* lutPtr, double oldVal);
+
+float LookupTemperature(float volts, FFF_Lut* lutPtr);
 
 //PID
 double filDiameterMm = 0.0;
@@ -437,21 +438,67 @@ void FFF_Udp_init()
 
 
 
-
-double LookupTemperature(double val, FFF_Lut* lutPtr, double oldVal)
+/* TODO: Implement something better like STeinhart-Hart method */
+float LookupTemperature(float volts, FFF_Lut* lutPtr)
 {
-    // Traverse the lut and search for the point that comes nearest
-    
-    // NOTE: TRUE = positive, FALSE = negative and zero
+  // Traverse the lut and search for the point that comes nearest
+  float currentR1 = (FFF_DEVICE_SUPPLY - volts) / THERMISTOR_PULL_UP_VAL;
+  float scaling = lutPtr->scalingFac;
+  float measuredRes = (volts / currentR1) * scaling;
 
+  if (volts <= 0)
+  {
+    return -999; // Something bad happened or call is erroneous
+  }
 
-    for (int i = 0; lutPtr->resPtr[i] >= 0.0; i++)
+  bool ntcThermistor = false;
+
+  if (lutPtr->resPtr[0] < lutPtr->resPtr[1])
+  {
+    ntcThermistor = true;
+  }
+
+  uint16_t foundIndex = 0;
+
+  // NOTE: TRUE = positive, FALSE = negative and zero
+  for (int i = 0; lutPtr->resPtr[i] >= 0.0 && lutPtr->tempPtr[i] != END_TEMPS; i++)
+  {
+    // Current values
+    float currRes = lutPtr->resPtr[i] * scaling;
+
+    if (ntcThermistor && measuredRes > currRes)
     {
-        for (int j = 0; lutPtr->tempPtr[j] != END_TEMPS; j++)
-        {
-
-        }
+      // For NTC
+      foundIndex = i;
+      break;
+    }
+    else if (!ntcThermistor && measuredRes < currRes)
+    {
+      // For PTC
+      foundIndex = i;
+      break;      
+    } 
+  }
+    
+  if (foundIndex > 1)
+  {
+    // Interpolate between the current value and the old value
+    int absTempDiff = lutPtr->tempPtr[foundIndex] - lutPtr->tempPtr[foundIndex - 1];
+    if (absTempDiff < 0.0)
+    {
+      absTempDiff *= -1.0;
     }
 
-    return -999;
+    float absResDiff = lutPtr->resPtr[foundIndex] - lutPtr->resPtr[foundIndex - 1];
+    if (absResDiff < 0.0)
+    {
+      absResDiff *= -1.0;
+    } 
+
+    float interpolFac = absResDiff / (float) absTempDiff;
+    float resultTemp = interpolFac * lutPtr->tempPtr[foundIndex - 1];
+    return resultTemp;
+  }
+
+  return -999;
 }

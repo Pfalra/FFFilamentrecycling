@@ -6,15 +6,15 @@
 #include <FFF_Thermistors.h>
 
 #define NL "\r\n"
-
 #define FFF_VERSION "V0.1"
-
 #define SERIAL_BAUDRATE 250000
-
 #define DELIMITER ";"
+#define FFF_DEVICE_SUPPLY 3.3
+
+
+
 
 #define TARGET_DIAMETER 1.75
-
 #define EXTRUDE_RATE_STEPS_PS 42
 
 /* ANALYZER */

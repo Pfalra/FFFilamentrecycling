@@ -3,6 +3,7 @@
 #include <Arduino.h>
 
 #if FFF_THERMISTOR0 == NTC_3950
+#define THERM_SCALING NTC3950_BASE
 const int thermistor0_temps[] = NTC3950_TEMPERATURES;
 const double thermistor0_resistances[] = NTC3950_RESISTANCE; 
 #elif 
@@ -14,5 +15,6 @@ const double thermistor0_resistances[] = DUMMY_RESISTANCE;
 FFF_Lut thermistor0Lut = 
 {
     .tempPtr = &thermistor0_temps,
-    .resPtr = &thermistor0_resistances
+    .resPtr = &thermistor0_resistances,
+    .scalingFac = THERM_SCALING
 };
