@@ -13,6 +13,6 @@ const double thermistor0_resistances[] = DUMMY_RESISTANCE;
 
 FFF_Lut thermistor0Lut = 
 {
-    .tempPtr = thermistor0_temps,
-    .resPtr = thermistor0_resistances
+    .tempPtr = &thermistor0_temps,
+    .resPtr = &thermistor0_resistances
 };
