@@ -79,7 +79,6 @@
 
 
 /* TASK INTERVALS */
-#define OLED_UPDATE_INTERVAL_MS         500
 #define UDP_HANDLE_INTERVAL_MS          400
 #define SD_LOG_INTERVAL_MS              1000
 #define PID_TEMP_INTERVAL_MS            1000
@@ -88,12 +87,11 @@
 #define ADC_SAMPLE_INTERVAL_MS          500
 
 /* TASK PRIORITIES */
-#define OLED_TASK_PRIO          1
+#define PID_TEMP_TASK_PRIO      1
 #define SD_LOG_TASK_PRIO        2
 #define UDP_TASK_PRIO           3
 #define FPGA_CALC_TASK_PRIO     4
-#define PID_TEMP_TASK_PRIO      5
-#define PID_DIAMETER_TASK_PRIO  6
+#define PID_DIAMETER_TASK_PRIO  5
 
 
 

@@ -208,14 +208,6 @@ void SuspendAppTasks()
 void CreateAppTasks()
 {
   xTaskCreate(
-      handleOled,     // Function that should be called
-      "OLED Handler", // Name of the task (for debugging)
-      8192,           // Stack size (bytes)
-      NULL,           // Parameter to pass
-      OLED_TASK_PRIO, // Task priority
-      &OledTaskHandle);
-
-  xTaskCreate(
       handleSdLog,         // Function that should be called
       "SD Logger Handler", // Name of the task (for debugging)
       8192,                // Stack size (bytes)
@@ -233,7 +225,7 @@ void CreateAppTasks()
 
   xTaskCreate(
       handleTempPID,       // Function that should be called
-      "PID Motor Handler", // Name of the task (for debugging)
+      "PID Temperature Handler", // Name of the task (for debugging)
       8192,                // Stack size (bytes)
       NULL,                // Parameter to pass
       3,                   // Task priority
@@ -381,16 +373,6 @@ void handleUdp(void *param)
     }
 
     vTaskDelay(UDP_HANDLE_INTERVAL_MS);
-  }
-}
-
-
-void handleOled(void *param)
-{
-  while (1)
-  {
-    
-    vTaskDelay(OLED_UPDATE_INTERVAL_MS);
   }
 }
 
