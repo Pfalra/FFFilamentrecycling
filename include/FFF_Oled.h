@@ -6,8 +6,9 @@
 void FFF_Oled_init();
 
 void FFF_Oled_updateTemperature(double tempVal);
-
 void FFF_Oled_updateDiameter(double diaVal);
+void FFF_Oled_updateExtruderMotSpeed(double motSpeed);
+void FFF_Oled_updatePullMotSpeed(double motSpeed);
 
 void FFF_Oled_updateDisplay();
 
