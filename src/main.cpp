@@ -128,6 +128,9 @@ void loop()
 
     // Disable Heater
 
+    // Disable Steppers
+    
+
     DeleteAppTasks();
     gAppStatus = APP_STOPPED;
     stopApp = false;
@@ -135,6 +138,7 @@ void loop()
 
   if (startApp)
   {
+    Serial.println("App started");
     if (gAppStatus == APP_STOPPED)
     {
       CreateAppTasks();

@@ -32,14 +32,16 @@ void FFF_Stepper_init()
   ledcAttachPin(EXTRUDER_STEP_PIN, ExtruderStepper.id);
   ledcAttachPin(PULLER_STEP_PIN, PullStepper.id);
   ledcAttachPin(WINCH_STEP_PIN, WinchStepper.id);
+  FFF_Stepper_disable();
+
 }
 
 void FFF_Stepper_enable()
 {
-  digitalWrite(STEPPER_EN_PIN, HIGH);
+  digitalWrite(STEPPER_EN_PIN, LOW);
 }
 
 void FFF_Stepper_disable()
 {
-  digitalWrite(STEPPER_EN_PIN, LOW);
+  digitalWrite(STEPPER_EN_PIN, HIGH);
 }
