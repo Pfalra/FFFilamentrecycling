@@ -93,7 +93,7 @@ void FFF_Oled_init()
 
 void FFF_Oled_updateTemperature(double tempVal)
 {
-    snprintf(tempLine.chars, OLED_MAX_CHARS - 1, "%u  degC", (uint16_t) tempVal);
+    snprintf(tempLine.chars, OLED_MAX_CHARS - 1, "%.1f  degC", tempVal);
     Serial.println(tempLine.chars);
     FFF_Oled_updateDisplay();
 }
@@ -124,13 +124,16 @@ void FFF_Oled_updatePullMotSpeed(double motSpeed)
 
 void FFF_Oled_updateDisplay()
 {
+    oled.clearDisplay();
     oled.setCursor(1,0);
     for (int i = 0; lineArr[i] != NULL; i++)
     {
         oled.setTextSize(lineArr[i]->textSize);
         oled.println(lineArr[i]->chars);
+#if DEBUG_OLED == TRUE
         Serial.print("Display showing: ");
         Serial.println(lineArr[i]->chars);
+#endif
     }
 
     oled.display();

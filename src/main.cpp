@@ -60,7 +60,7 @@ TaskHandle_t FPGATaskHandle;
 // Prototypes
 void FFF_Udp_init();
 
-float LookupTemperature(float volts, FFF_Lut* lutPtr);
+double LookupTemperature(double volts, FFF_Lut* lutPtr);
 
 //PID
 double filDiameterMm = 0.0;
@@ -111,6 +111,24 @@ void setup()
   Serial.println();
   Serial.println("FFF Device starting up...");
   vTaskDelay(200);
+
+  
+#if DEBUG_LUT_HANDLING==TRUE
+    
+    // Print the LUT for Debug
+    Serial.print("D> First LUT Entries: ");
+
+    for (int i = 0; i < 10; i++)
+    {
+      Serial.print("TEMP: ");
+      Serial.print(thermistor0Lut.tempPtr[i]);
+      Serial.print("\t\t");
+      Serial.print("RES: ");
+      Serial.print(thermistor0Lut.resPtr[i]);
+      Serial.println();
+    }
+    Serial.println("...");
+#endif 
 
   /* Initialize OLED */
   FFF_Oled_init();
@@ -224,7 +242,7 @@ void CreateAppTasks()
   xTaskCreate(
       handleADC,     // Function that should be called
       "ADC Handler", // Name of the task (for debugging)
-      8192,          // Stack size (bytes)
+      16384,          // Stack size (bytes)
       NULL,          // Parameter to pass
       3,             // Task priority
       &ADCTaskHandle);
@@ -412,8 +430,15 @@ void handleADC(void *param)
 {
   while (1)
   {
-    hotendTemp = FFF_Adc_readVolt(EXT_ADC_TEMP_CHANNEL);
-    vTaskDelay(ADC_SAMPLE_INTERVAL_MS);
+    if (FFF_Adc_isReady())
+    {
+      hotendTemp = LookupTemperature((double)FFF_Adc_readVolt(EXT_ADC_TEMP_CHANNEL), &thermistor0Lut);
+      Serial.print("I> TH0: ");
+      Serial.print(hotendTemp, 1);
+      Serial.println(" deg C");
+      FFF_Oled_updateTemperature(hotendTemp);
+      vTaskDelay(ADC_SAMPLE_INTERVAL_MS);
+    }
   }
 }
 
@@ -439,12 +464,23 @@ void FFF_Udp_init()
 
 
 /* TODO: Implement something better like STeinhart-Hart method */
-float LookupTemperature(float volts, FFF_Lut* lutPtr)
+double LookupTemperature(double volts, FFF_Lut* lutPtr)
 {
   // Traverse the lut and search for the point that comes nearest
-  float currentR1 = (FFF_DEVICE_SUPPLY - volts) / THERMISTOR_PULL_UP_VAL;
-  float scaling = lutPtr->scalingFac;
-  float measuredRes = (volts / currentR1) * scaling;
+  double voltDiff = FFF_DEVICE_SUPPLY - volts;
+  double scaling = lutPtr->scalingFac;
+  double measuredRes = (volts * THERMISTOR_PULL_UP_VAL) / (voltDiff);
+
+#if DEBUG_LUT_HANDLING==TRUE
+  double pupVal = THERMISTOR_PULL_UP_VAL;
+  Serial.print("D> DIFFVOLTS: ");
+  Serial.println(voltDiff, 4);
+  Serial.print("D> PUPVAL: ");
+  Serial.println(pupVal, 4);
+  Serial.print("D> MEASRES: ");
+  Serial.println(measuredRes, 4);
+#endif
+
 
   if (volts <= 0)
   {
@@ -453,7 +489,7 @@ float LookupTemperature(float volts, FFF_Lut* lutPtr)
 
   bool ntcThermistor = false;
 
-  if (lutPtr->resPtr[0] < lutPtr->resPtr[1])
+  if (lutPtr->resPtr[0] > lutPtr->resPtr[1])
   {
     ntcThermistor = true;
   }
@@ -461,25 +497,45 @@ float LookupTemperature(float volts, FFF_Lut* lutPtr)
   uint16_t foundIndex = 0;
 
   // NOTE: TRUE = positive, FALSE = negative and zero
-  for (int i = 0; lutPtr->resPtr[i] >= 0.0 && lutPtr->tempPtr[i] != END_TEMPS; i++)
+  for (int i = 0; lutPtr->resPtr[i] > 0.0 && lutPtr->tempPtr[i] != END_TEMPS; i++)
   {
     // Current values
-    float currRes = lutPtr->resPtr[i] * scaling;
+    double currRes = lutPtr->resPtr[i] * scaling;
+    
+
+#if DEBUG_LUT_HANDLING==TRUE
+    Serial.print("D> Resistor value in LUT: ");
+    Serial.println(currRes);
+#endif 
 
     if (ntcThermistor && measuredRes > currRes)
     {
       // For NTC
+      
+#if DEBUG_LUT_HANDLING==TRUE
+      Serial.println("D> NTC value found");
+#endif 
       foundIndex = i;
       break;
     }
     else if (!ntcThermistor && measuredRes < currRes)
     {
       // For PTC
+      
+#if DEBUG_LUT_HANDLING==TRUE
+      Serial.println("D> PTC value found");
+#endif 
       foundIndex = i;
       break;      
     } 
   }
-    
+  
+  
+#if DEBUG_LUT_HANDLING==TRUE
+    Serial.print("D> Index in LUT: ");
+    Serial.println(foundIndex);
+#endif 
+
   if (foundIndex > 1)
   {
     // Interpolate between the current value and the old value
@@ -489,16 +545,45 @@ float LookupTemperature(float volts, FFF_Lut* lutPtr)
       absTempDiff *= -1.0;
     }
 
-    float absResDiff = lutPtr->resPtr[foundIndex] - lutPtr->resPtr[foundIndex - 1];
+    double absResDiff = lutPtr->resPtr[foundIndex] - lutPtr->resPtr[foundIndex - 1];
     if (absResDiff < 0.0)
     {
       absResDiff *= -1.0;
     } 
 
-    float interpolFac = absResDiff / (float) absTempDiff;
-    float resultTemp = interpolFac * lutPtr->tempPtr[foundIndex - 1];
-    return resultTemp;
+    int foundTempVal1 = lutPtr->tempPtr[foundIndex-1];
+    int foundTempVal2 = lutPtr->tempPtr[foundIndex];
+    double foundResVal1 = lutPtr->resPtr[foundIndex-1];
+    double foundResVal2 = lutPtr->resPtr[foundIndex];
+
+    if (foundTempVal1 < 0.0)
+    {
+      foundTempVal1 *= -1.0;
+    }
+
+    if (foundTempVal2 < 0.0)
+    {
+      foundTempVal2 *= -1.0;
+    }
+
+    // Calculate two coefficients
+    double coeff1 = foundResVal1 / (double) foundTempVal1;
+    double coeff2 = foundResVal2 / (double) foundTempVal2;
+
+    // Take their mean and add it to the first one
+    double resCoeff = coeff1 + ((coeff2 - coeff1) / 2);
+    
+    // Now divide our measured resistance with this value
+    return (double)(measuredRes / resCoeff) / (double) 1000;
   }
+
+#if DEBUG_LUT_HANDLING==TRUE
+  Serial.println("E> Couldn't find entry in LUT");
+  Serial.print("I> Measured voltage: ");
+  Serial.println(volts);
+  Serial.print("I> Calculated resistance: ");
+  Serial.println(measuredRes, 4);
+#endif
 
   return -999;
 }

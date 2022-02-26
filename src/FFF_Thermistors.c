@@ -4,17 +4,17 @@
 
 #if FFF_THERMISTOR0 == NTC_3950
 #define THERM_SCALING NTC3950_BASE
-const int thermistor0_temps[] = NTC3950_TEMPERATURES;
-const double thermistor0_resistances[] = NTC3950_RESISTANCE; 
+int thermistor0_temps[] = NTC3950_TEMPERATURES;
+float thermistor0_resistances[] = NTC3950_RESISTANCE; 
 #elif 
 const int thermistor0_temps[] = DUMMY_THERMISTOR;
-const double thermistor0_resistances[] = DUMMY_RESISTANCE;
+const float thermistor0_resistances[] = DUMMY_RESISTANCE;
 
 #endif
 
 FFF_Lut thermistor0Lut = 
 {
-    .tempPtr = &thermistor0_temps,
-    .resPtr = &thermistor0_resistances,
+    .tempPtr = thermistor0_temps,
+    .resPtr = thermistor0_resistances,
     .scalingFac = THERM_SCALING
 };
