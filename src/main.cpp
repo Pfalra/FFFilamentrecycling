@@ -59,7 +59,7 @@ TaskHandle_t FPGATaskHandle;
 
 // Prototypes
 void FFF_Udp_init();
-
+double LookupTemperature(double val, FFF_Lut* lutPtr, double oldVal);
 
 //PID
 double filDiameterMm = 0.0;
@@ -85,10 +85,13 @@ PID pidTempControl(&hotendTemp, &pwmDutyCycle, &targetTemp, kp_temp, ki_temp, kd
 
 
 //UDP
-
 WiFiUDP udpConn;
 char udpRecPBuf[UDP_PBUF_SIZE];
 char udpSndPBuf[UDP_PBUF_SIZE];
+
+
+
+extern FFF_Lut thermistor0Lut;
 
 
 
@@ -129,7 +132,7 @@ void loop()
     // Disable Heater
 
     // Disable Steppers
-    
+
 
     DeleteAppTasks();
     gAppStatus = APP_STOPPED;
@@ -430,4 +433,25 @@ void FFF_Udp_init()
 {
   /* Maybe use AsyncUdp in the future */
   udpConn.begin(UDP_PORT);
+}
+
+
+
+
+double LookupTemperature(double val, FFF_Lut* lutPtr, double oldVal)
+{
+    // Traverse the lut and search for the point that comes nearest
+    
+    // NOTE: TRUE = positive, FALSE = negative and zero
+
+
+    for (int i = 0; lutPtr->resPtr[i] >= 0.0; i++)
+    {
+        for (int j = 0; lutPtr->tempPtr[j] != END_TEMPS; j++)
+        {
+
+        }
+    }
+
+    return -999;
 }

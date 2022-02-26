@@ -51,8 +51,8 @@ typedef struct FFF_Measurement_s
 
 typedef struct FFF_Lut_s
 {
+    int* tempPtr;
     double* resPtr; 
-    double* tempPtr;
 } FFF_Lut;
 
 

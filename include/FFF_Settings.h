@@ -1,6 +1,10 @@
 #ifndef FFF_SETTINGS_H
 #define FFF_SETTINGS_H
 
+#include <FFF_Thermistors.h>
+
+#include <FFF_Thermistors.h>
+
 #define NL "\r\n"
 
 #define FFF_VERSION "V0.1"
@@ -29,6 +33,9 @@
 #define DUMMY_VAL_DIAMETER 1.75
 #define DUMMY_VAL_EXTMOT_SPEED 100
 #define DUMMY_VAL_PULLMOT_SPEED 300
+
+#define THERMISTOR_PULL_UP_VAL 4700
+#define FFF_THERMISTOR0 NTC3950 
 
 /* ADC */
 #define EXT_ADC_ADDR 0x48

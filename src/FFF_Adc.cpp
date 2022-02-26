@@ -77,21 +77,3 @@ uint16_t FFF_Adc_readTempRaw(uint8_t channel)
 }
 
 
-double FFF_Adc_lookupTemperature(double val, FFF_Lut* lutPtr, double oldVal)
-{
-    // Traverse the lut and search for the point that comes nearest
-    
-    // NOTE: TRUE = positive, FALSE = negative and zero
-
-
-    for (int i = 0; lutPtr->resPtr[i] != NULL; i++)
-    {
-        for (int j = 0; lutPtr->tempPtr[j] != NULL; j++)
-        {
-
-        }
-    }
-
-    return -999;
-}
-
