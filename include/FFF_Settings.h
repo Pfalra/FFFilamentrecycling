@@ -1,21 +1,24 @@
 #ifndef FFF_SETTINGS_H
 #define FFF_SETTINGS_H
 
-#include <FFF_Thermistors.h>
+#include <FFF_Types.h>
 
-#include <FFF_Thermistors.h>
+/* THERMISTORS */
+#define DUMMY_THERMISTOR 0
+#define NTC_3950 1
+#define FFF_THERMISTOR0 NTC3950 
 
 #define NL "\r\n"
+#define FFF_LOG_FILE_FORMAT ".txt"
 #define FFF_VERSION "V0.1"
 #define SERIAL_BAUDRATE 250000
 #define DELIMITER ";"
 #define FFF_DEVICE_SUPPLY 3.3
 
-
-
-
 #define TARGET_DIAMETER 1.75
 #define EXTRUDE_RATE_STEPS_PS 42
+
+#define MAX_TEMP_DELTA_DEG  25
 
 /* ANALYZER */
 #define MEANFILTER_ACTIVE       TRUE
@@ -35,7 +38,6 @@
 #define DUMMY_VAL_PULLMOT_SPEED 300
 
 #define THERMISTOR_PULL_UP_VAL 4700.0f
-#define FFF_THERMISTOR0 NTC3950 
 
 /* ADC */
 #define EXT_ADC_ADDR 0x48
@@ -50,6 +52,7 @@
 #define UDP_APP_START_CMD "START"
 #define UDP_APP_STOP_CMD "STOP"
 #define UDP_APP_PAUSE_CMD "PAUSE"
+#define UDP_APP_LIST_CMD "LIST"
 
 #define UDP_START_CONFIRM "STARTING APP" NL
 #define UDP_STOP_CONFIRM "STOPPING APP" NL
@@ -79,16 +82,16 @@
 
 
 /* TASK INTERVALS */
-#define UDP_HANDLE_INTERVAL_MS          400
-#define SD_LOG_INTERVAL_MS              1000
-#define PID_TEMP_INTERVAL_MS            1000
-#define PID_DIAMETER_INTERVAL_MS        1000
+#define UDP_HANDLE_INTERVAL_MS              400
+#define LOG_INTERVAL_MS                     500
+#define PID_TEMP_INTERVAL_MS                1000
+#define PID_DIAMETER_INTERVAL_MS            1000
 #define FPGA_CALCULATE_DIAMETER_INTERVAL_MS 1000
-#define ADC_SAMPLE_INTERVAL_MS          500
+#define ADC_SAMPLE_INTERVAL_MS              500
 
 /* TASK PRIORITIES */
-#define PID_TEMP_TASK_PRIO      1
-#define SD_LOG_TASK_PRIO        2
+#define PID_TEMP_TASK_PRIO      6
+#define LOG_TASK_PRIO           2
 #define UDP_TASK_PRIO           3
 #define FPGA_CALC_TASK_PRIO     4
 #define PID_DIAMETER_TASK_PRIO  5

@@ -6,7 +6,7 @@
 #define THERM_SCALING NTC3950_BASE
 int thermistor0_temps[] = NTC3950_TEMPERATURES;
 float thermistor0_resistances[] = NTC3950_RESISTANCE; 
-#elif 
+#elif FFF_THERMISTOR0 == DUMMY_THERMISTOR
 const int thermistor0_temps[] = DUMMY_THERMISTOR;
 const float thermistor0_resistances[] = DUMMY_RESISTANCE;
 

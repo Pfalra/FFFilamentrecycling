@@ -94,7 +94,7 @@ void FFF_Oled_init()
 void FFF_Oled_updateTemperature(double tempVal)
 {
     snprintf(tempLine.chars, OLED_MAX_CHARS - 1, "%.1f  degC", tempVal);
-    Serial.println(tempLine.chars);
+    // Serial.println(tempLine.chars);
     FFF_Oled_updateDisplay();
 }
 
@@ -102,7 +102,7 @@ void FFF_Oled_updateTemperature(double tempVal)
 void FFF_Oled_updateDiameter(double diaVal)
 {
     snprintf(diameterLine.chars, OLED_MAX_CHARS - 1, "%.2fmm", diaVal);
-    Serial.println(tempLine.chars);
+    // Serial.println(tempLine.chars);
     FFF_Oled_updateDisplay();
 }
 
@@ -110,14 +110,14 @@ void FFF_Oled_updateDiameter(double diaVal)
 void FFF_Oled_updateExtruderMotSpeed(double motSpeed)
 {
     snprintf(extVelLine.chars, OLED_MAX_CHARS - 1, "%u steps/s", (uint16_t) motSpeed);
-    Serial.println(extVelLine.chars);
+    // Serial.println(extVelLine.chars);
     FFF_Oled_updateDisplay();
 }
 
 void FFF_Oled_updatePullMotSpeed(double motSpeed)
 {
     snprintf(pullVelLine.chars, OLED_MAX_CHARS - 1, "%u steps/s", (uint16_t) motSpeed);
-    Serial.println(pullVelLine.chars);
+    // Serial.println(pullVelLine.chars);
     FFF_Oled_updateDisplay();
 }
 

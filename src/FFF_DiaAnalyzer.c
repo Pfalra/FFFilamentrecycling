@@ -104,7 +104,7 @@ void FFF_DiaAn_analyze(FFF_Measurement *meas)
         return; // Measurement is protected
     }
 
-    if (meas->dataPoints == NULL_PTR)
+    if (!meas->dataPoints)
     {
         return;
     }

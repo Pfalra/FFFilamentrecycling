@@ -110,42 +110,49 @@ void FFF_reportSDEvent()
 }
 
 
-/* PrintFuncPtr for optional future use for printing to another interface */
-void FFF_SD_listFiles(void* (printFuncPtr)(const char*))
+void FFF_SD_openLogFile(String fileName, File* fptr)
 {
-  const char* dir = "/";
-  File root = SD.open(dir);
-
-  if(!root){
-    printFuncPtr("Failed to open directory");
+  *fptr = SD.open("/" + fileName, FILE_WRITE);
+  
+  if(!*fptr){
+    Serial.println("Failed to open files for writing");
     return;
-  }
-
-  if(!root.isDirectory()){
-    printFuncPtr("Could not open root dir");
-    return;
-  }
-
-  File file = root.openNextFile();
-  while(file){
-    if(!file.isDirectory()){
-      printFuncPtr("  FILE: ");
-      printFuncPtr(file.name());
-    }
-    file = root.openNextFile();
   }
 }
 
 
-void FFF_SD_openLogFile(String fileName)
+
+bool FFF_SD_writeToFile(File* fptr, char line[])
 {
-  File file = SD.open("/" + fileName, FILE_WRITE);
-  
-  if(!file){
-    Serial.println("Failed to open files for writing");
-    return;
+  if (fptr->availableForWrite())
+  {
+    fptr->println(line);
+    return true;
   }
-  file.close();
+  else 
+  {
+    Serial.println("E> Error in file access");
+    return false;
+  }
+
+  return false;
+}
+
+
+bool FFF_SD_writeToFile(File* fptr, const char line[])
+{
+  if (fptr->availableForWrite())
+  {
+    fptr->println(line);
+    return true;
+  }
+  else 
+  {
+    Serial.println("E> Error in file access");
+    return false;
+  }
+
+  return false;
 }
 
 
@@ -173,3 +180,98 @@ void FFF_SD_appendLineToLogFile(String fileName, String line)
 
   file.close();
 }
+
+
+bool FFF_SD_getFileList(char outputArr[], uint16_t len)
+{
+  String outStr = "";
+  const char* dir = "/";
+  File root = SD.open(dir);
+
+  memset(outputArr, '\0', len);
+  if (!root && !root.isDirectory())
+  {
+    const char errAccessMsg[] = "E>ROOT NOT FOUND OR NOT ACCESSIBLE" NL;
+    strncpy(outputArr, errAccessMsg, sizeof(errAccessMsg));
+    return false;
+  }
+
+  File file = root.openNextFile();
+  uint8_t fileCount = 0;
+  while(file)
+  {
+    if (!file.isDirectory())
+    {
+      outStr += file.name();
+      outStr += NL;
+    }
+    file = root.openNextFile();
+    fileCount++;
+  }
+
+  if (fileCount > MAX_NUM_LOG_FILES)
+  {
+    const char errFileMsg[] = "E>Too many log files";
+    strncpy(outputArr, errFileMsg, sizeof(errFileMsg));
+  }
+
+  outStr.toCharArray(outputArr, len);
+  return true;
+}
+
+
+int8_t FFF_SD_getFileCount()
+{
+  const char* dir = "/";
+  File root = SD.open(dir);
+
+  if(!root) 
+  {
+    Serial.println("E>Failed to open directory");
+    return -1;
+  }
+
+  if(!root.isDirectory())
+  {
+    Serial.println("E>Could not open root dir");
+    return -1;
+  }
+
+  File file = root.openNextFile();
+  uint8_t counter = 0;
+  while(file)
+  {
+    if(!file.isDirectory()){
+      counter++;
+    }
+    file = root.openNextFile();
+  }
+
+  return counter;
+}
+
+
+bool FFF_SD_attachLogFile(FFF_Log* logPtr)
+{
+  String filename = "log_" + FFF_SD_getFileCount();
+  filename += FFF_LOG_FILE_FORMAT;
+
+  FFF_SD_openLogFile(filename, (File*) logPtr->logFilePtr);
+
+  if (logPtr->logFilePtr)
+  {
+    return true;
+  }
+
+  Serial.println("E>Could not attach file to log.");
+  return false;
+}
+
+
+void FFF_SD_detachLogFile(FFF_Log* logPtr)
+{
+  File* filePtr = (File*) logPtr->logFilePtr;
+  filePtr->close();
+  logPtr->logFilePtr = NULL;
+}
+

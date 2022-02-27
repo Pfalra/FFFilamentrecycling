@@ -16,6 +16,8 @@
 #include <FFF_Oled.h>
 #include <FFF_Graphics.h>
 #include <FFF_Credentials.h>
+#include <FFF_Thermistors.h>
+
 
 //TaskControlFunctions
 void CreateAppInitTasks();
@@ -35,7 +37,7 @@ void InitializeSD(void *param);
 //HandlerFunctions
 void handleUdp(void *param);
 void handleOled(void *param);
-void handleSdLog(void *param);
+void handleLog(void *param);
 void handleMotorPID(void *param);
 void handleTempPID(void *param);
 void handleADC(void *param);
@@ -49,7 +51,7 @@ TaskHandle_t initSDHandle;
 TaskHandle_t initOtherHandle;
 TaskHandle_t UdpTaskHandle;
 TaskHandle_t OledTaskHandle;
-TaskHandle_t SdLogTaskHandle;
+TaskHandle_t LogTaskHandle;
 TaskHandle_t PIDDiameterTaskHandle;
 TaskHandle_t PIDTemperatureTaskHandle;
 TaskHandle_t ADCTaskHandle;
@@ -91,9 +93,16 @@ char udpRecPBuf[UDP_PBUF_SIZE];
 char udpSndPBuf[UDP_PBUF_SIZE];
 
 
-
+// Thermistor
 extern FFF_Lut thermistor0Lut;
 
+const char paramArr[] = "TEMP" DELIMITER \
+              "DIAMETER" DELIMITER \
+              "PULLMOT_SPD" DELIMITER \
+              "EXTMOT_SPD" DELIMITER;
+
+// Log for our application
+FFF_Log appLog;
 
 
 FFF_AppStatus gAppStatus = APP_STOPPED;
@@ -102,6 +111,7 @@ bool stopApp = false;
 bool pauseApp = false;
 uint8_t countApp = 0;
 
+uint32_t logCount = 0;
 
 
 void setup()
@@ -112,6 +122,10 @@ void setup()
   Serial.println("FFF Device starting up...");
   vTaskDelay(200);
 
+  appLog.paramStr = paramArr;
+  appLog.name = "Application Log";
+  appLog.isProtected = false;
+  appLog.isActive = false;
   
 #if DEBUG_LUT_HANDLING==TRUE
     
@@ -146,8 +160,6 @@ void loop()
 {
   if (stopApp)
   {
-    // Stop Logging
-
     // Disable Heater
 
     // Disable Steppers
@@ -160,7 +172,6 @@ void loop()
 
   if (startApp)
   {
-    Serial.println("App started");
     if (gAppStatus == APP_STOPPED)
     {
       CreateAppTasks();
@@ -170,6 +181,7 @@ void loop()
       ResumeAppTasks();
     }
 
+    Serial.println("App started");
     gAppStatus = APP_RUNNING;
     startApp = false;
   }
@@ -177,6 +189,8 @@ void loop()
   if (pauseApp)
   {
     SuspendAppTasks();
+    Serial.println("App Suspended");
+    gAppStatus = APP_PAUSED;
     pauseApp = false;
   }
 }
@@ -187,13 +201,11 @@ void loop()
 
 void ResumeAppTasks()
 {
-  vTaskResume(SdLogTaskHandle);
   vTaskResume(PIDDiameterTaskHandle);
 }
 
 void DeleteAppTasks()
 {
-  vTaskDelete(SdLogTaskHandle);
   vTaskDelete(PIDDiameterTaskHandle);
   vTaskDelete(PIDTemperatureTaskHandle);
   vTaskDelete(ADCTaskHandle);
@@ -201,19 +213,19 @@ void DeleteAppTasks()
 
 void SuspendAppTasks()
 {
-  vTaskSuspend(SdLogTaskHandle);
+  vTaskSuspend(LogTaskHandle);
   vTaskSuspend(PIDDiameterTaskHandle);
 }
 
 void CreateAppTasks()
 {
   xTaskCreate(
-      handleSdLog,         // Function that should be called
-      "SD Logger Handler", // Name of the task (for debugging)
+      handleLog,         // Function that should be called
+      "Logger Handler", // Name of the task (for debugging)
       8192,                // Stack size (bytes)
-      NULL,                // Parameter to pass
-      SD_LOG_TASK_PRIO,    // Task priority
-      &SdLogTaskHandle);
+      &appLog,                // Parameter to pass
+      LOG_TASK_PRIO,    // Task priority
+      &LogTaskHandle);
 
   xTaskCreate(
       handleMotorPID,      // Function that should be called
@@ -330,9 +342,9 @@ void InitializeSD(void *param)
 
 void handleUdp(void *param)
 {
+  Serial.println("Reading UDP packets...");
   while (1)
   {
-    Serial.println("Reading Packet:");
     int packetSize = udpConn.parsePacket();
 
     if (packetSize)
@@ -349,26 +361,43 @@ void handleUdp(void *param)
       if (strncmp(udpRecPBuf, UDP_APP_START_CMD, sizeof(UDP_APP_START_CMD)) == 0)
       {
         startApp = TRUE;
-        udpConn.write((uint8_t*) UDP_CONFIRM, (size_t) sizeof(UDP_CONFIRM));
-        udpConn.write((uint8_t*) UDP_START_CONFIRM, (size_t) sizeof(UDP_START_CONFIRM));
-      } else if (strncmp(udpRecPBuf, UDP_APP_STOP_CMD, sizeof(UDP_APP_STOP_CMD)) == 0)
+        udpConn.println(UDP_CONFIRM);
+        udpConn.println(UDP_START_CONFIRM);
+      } 
+      else if (strncmp(udpRecPBuf, UDP_APP_STOP_CMD, sizeof(UDP_APP_STOP_CMD)) == 0)
       {
         stopApp = TRUE;
-        udpConn.write((uint8_t*) UDP_CONFIRM, (size_t) sizeof(UDP_CONFIRM));
-        udpConn.write((uint8_t*) UDP_STOP_CONFIRM, (size_t) sizeof(UDP_STOP_CONFIRM));
-      } else if (strncmp(udpRecPBuf, UDP_APP_PAUSE_CMD, sizeof(UDP_APP_PAUSE_CMD)) == 0)
+        udpConn.println(UDP_CONFIRM);
+        udpConn.println(UDP_STOP_CONFIRM);
+      } 
+      else if (strncmp(udpRecPBuf, UDP_APP_PAUSE_CMD, sizeof(UDP_APP_PAUSE_CMD)) == 0)
       {
         pauseApp = TRUE;
-        udpConn.write((uint8_t*) UDP_CONFIRM, (size_t) sizeof(UDP_CONFIRM));
-        udpConn.write((uint8_t*) UDP_PAUSE_CONFIRM, (size_t) sizeof(UDP_PAUSE_CONFIRM));
-      } else 
+        udpConn.println(UDP_CONFIRM);
+        udpConn.println(UDP_PAUSE_CONFIRM);
+      } 
+      else if (strncmp(udpRecPBuf, UDP_APP_LIST_CMD, sizeof(UDP_APP_LIST_CMD)) == 0)
       {
+        udpConn.println(UDP_CONFIRM);
+        char fileStr[MAX_OUT_STRING_LEN];
+        FFF_SD_getFileList(fileStr, MAX_OUT_STRING_LEN);
+
+        const char heading[] = "--- FILE LIST ----";
+        Serial.println(heading);
+        Serial.println(fileStr);
+        udpConn.println(heading);
+        udpConn.println(fileStr);
+
+      } 
+      else 
+      {
+        Serial.println("I>Unknown command");
 
       }
 
       // Confirm reception
       udpConn.beginPacket(udpConn.remoteIP(), udpConn.remotePort());
-      udpConn.write((uint8_t*) UDP_CONFIRM, (size_t) sizeof(UDP_CONFIRM));
+      udpConn.println(UDP_CONFIRM);
       udpConn.endPacket();
     }
 
@@ -377,13 +406,72 @@ void handleUdp(void *param)
 }
 
 
-void handleSdLog(void *param)
+void handleLog(void *param)
 {
-
+  // The logging that should be executed will be passed as param 
+  FFF_Log* logPtr = (FFF_Log*) param;
   while (1)
   {
+    if (logPtr == NULL)
+    {
+      Serial.println("E>Log not initialized");
+      continue;
+    }
 
-    vTaskDelay(SD_LOG_INTERVAL_MS);
+    Serial.print("App Status: ");
+    Serial.println(gAppStatus);
+
+    if (gAppStatus == APP_RUNNING || gAppStatus == APP_PAUSED) // Also log during pause
+    {
+      logCount++;
+
+      uint32_t time = logCount * LOG_INTERVAL_MS;
+      if (logPtr->isActive)
+      {
+        // Logging is running so the params were already written
+        FFF_SD_writeToFile((File*) logPtr->logFilePtr, logPtr->dataStr);
+      }
+      else 
+      {
+        // Logging was not active until now, so create file
+        // Write params into file and into output
+        for (int i = 0; i < 500; i++)
+        {
+          if (!logPtr->isProtected)
+          {
+            break;
+          }
+        }
+        logPtr->isProtected = true;
+
+        udpConn.println(logPtr->paramStr);
+        Serial.println(logPtr->paramStr);
+        
+        if (FFF_SD_attachLogFile(logPtr))
+        {
+          // File successfully attached
+          Serial.println("I>File successfully attached");
+          FFF_SD_writeToFile((File*) logPtr->logFilePtr, logPtr->paramStr);
+        }
+        Serial.println("E>File attachment failed");
+
+        logPtr->isProtected = false;
+      }
+
+    }
+    else 
+    {
+      // App should be stopped so stop logging
+      if (logPtr->isActive)
+      {
+        Serial.println("I>Detaching file");
+        FFF_SD_detachLogFile(logPtr);
+      }
+
+    }
+
+
+    vTaskDelay(LOG_INTERVAL_MS);
   }
 }
 
@@ -412,15 +500,31 @@ void handleADC(void *param)
 {
   while (1)
   {
+    volatile double oldTemp = 0.0;
     if (FFF_Adc_isReady())
     {
-      hotendTemp = LookupTemperature((double)FFF_Adc_readVolt(EXT_ADC_TEMP_CHANNEL), &thermistor0Lut);
+      hotendTemp = LookupTemperature((double) FFF_Adc_readVolt(EXT_ADC_TEMP_CHANNEL), &thermistor0Lut);
       Serial.print("I> TH0: ");
       Serial.print(hotendTemp, 1);
       Serial.println(" deg C");
-      FFF_Oled_updateTemperature(hotendTemp);
-      vTaskDelay(ADC_SAMPLE_INTERVAL_MS);
     }
+
+    double diff = oldTemp - hotendTemp; 
+    if (diff < 0.0)
+    {
+      diff *= -1;
+    }
+
+    if (diff > MAX_TEMP_DELTA_DEG)
+    {
+      // Some erroneous reading so take the previous
+      hotendTemp = oldTemp; 
+    }
+
+    oldTemp = hotendTemp;
+    FFF_Oled_updateTemperature(hotendTemp); 
+    
+    vTaskDelay(ADC_SAMPLE_INTERVAL_MS);
   }
 }
 

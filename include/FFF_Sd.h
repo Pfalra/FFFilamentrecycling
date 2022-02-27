@@ -2,6 +2,7 @@
 #define FFF_SD_H
 
 #include <FFF_Types.h>
+#include <FS.h>
 #include <Arduino.h>
 
 typedef enum FFF_Sdmode_e
@@ -20,11 +21,19 @@ bool FFF_reconnectSD();
 
 void FFF_reportSDEvent();
 
-/* PrintFuncPtr for optional future use for printing to another interface */
-void FFF_SD_listFiles(void* (printFuncPtr)(const char*));
-
-void FFF_SD_openLogFile(String fileName);
+void FFF_SD_openLogFile(String fileName, File* fptr);
 
 void FFF_SD_appendLineToLogFile(String fileName, String line);
 
+bool FFF_SD_getFileList(char outputArr[], uint16_t len);
+
+bool FFF_SD_attachLogFile(FFF_Log* logPtr);
+
+void FFF_SD_detachLogFile(FFF_Log* logPtr);
+
+int8_t FFF_SD_getFileCount();
+
+
+bool FFF_SD_writeToFile(File* fptr, const char line[]);
+bool FFF_SD_writeToFile(File* fptr, char line[]);
 #endif

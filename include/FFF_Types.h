@@ -1,12 +1,17 @@
 #ifndef FFF_TYPES_H
 #define FFF_TYPES_H
 
+#include <Arduino.h>
 #include <stdint.h>
 
 // #define NULL 0x0
 
-#define MAX_ARRAY_LEN 100
-#define NULL_PTR ((void*) 0) 
+/* LOGGING */
+#define MAX_NUM_LOG_FILES 32
+#define MAX_LOG_PARAM_LEN 64
+#define MAX_LOG_DATA_LEN 64
+
+#define MAX_OUT_STRING_LEN 512
 #define FALSE 0
 #define TRUE 1
 
@@ -65,6 +70,17 @@ typedef struct FFF_Stepper_s
   uint8_t microsteps;
   double targetSpeed;
 } FFF_Stepper;
+
+
+typedef struct FFF_Log_s
+{
+  const char* name;
+  const char* paramStr;
+  char dataStr[MAX_LOG_DATA_LEN];
+  bool isProtected;
+  bool isActive;
+  void* logFilePtr;
+} FFF_Log;
 
 
 #endif

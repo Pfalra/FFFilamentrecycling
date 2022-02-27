@@ -1,4 +1,4 @@
-#include <FFF_Types.h>
+#include <FFF_Settings.h>
 
 #define END_TEMPS 9999
 /************************************/
