@@ -3,8 +3,10 @@
 
 #include <stdint.h>
 
-void configurePwm(double dutyCycle, uint32_t frequency);
+void FFF_Heater_init();
 
+void FFF_Heater_heat(double dutycycle);
 
+void FFF_Heater_stop();
 
 #endif

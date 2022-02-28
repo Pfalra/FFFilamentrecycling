@@ -165,9 +165,9 @@ void loop()
   if (stopApp)
   {
     // Disable Heater
-
+    FFF_Heater_stop();
     // Disable Steppers
-
+    FFF_Stepper_disableAll();
 
     DeleteAppTasks();
     gAppStatus = APP_STOPPED;
@@ -176,6 +176,8 @@ void loop()
 
   if (startApp)
   {
+    FFF_Heater_heat(pwmDutyCycle);
+    FFF_Stepper_enableAll();
     if (gAppStatus == APP_STOPPED)
     {
       CreateAppTasks();
@@ -192,6 +194,7 @@ void loop()
 
   if (pauseApp)
   {
+    FFF_Stepper_stopAll();
     SuspendAppTasks();
     Serial.println("App Suspended");
     gAppStatus = APP_PAUSED;
@@ -431,9 +434,9 @@ void handleLog(void *param)
       tmpStr += DELIMITER;
       tmpStr += filDiameterMm;
       tmpStr += DELIMITER;
-      tmpStr += PullStepper.targetSpeed;
+      tmpStr += pullStepper.pwmPtr->freq;
       tmpStr += DELIMITER;
-      tmpStr += ExtruderStepper.targetSpeed;
+      tmpStr += extruderStepper.pwmPtr->freq;
 
       tmpStr.toCharArray(logPtr->dataStr, sizeof(logPtr->dataStr));
       logCount++;
@@ -510,6 +513,7 @@ void handleDiameterMotorPID(void *param)
   {
     pidMotControl.Compute();
     // Provide the values to the steppers 
+    FFF_Stepper_runStepsPerSecond(&pullStepper, pwmFrequency);
     vTaskDelay(PID_DIAMETER_INTERVAL_MS);
   }
 }
