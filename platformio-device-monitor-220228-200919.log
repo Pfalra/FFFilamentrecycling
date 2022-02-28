@@ -1,0 +1,621 @@
+�
+FFF Device starting up...
+Starting OLED
+Showing Logo
+I>Starting WiFi.
+
+I>Initializing other hardware/software
+
+I> ADC connected
+I> ADC Ready
+I> ADC initialized for channel: 3
+WiFi SSID: FFF-Device
+WiFi PWD: FFF-Device2022
+
+
+> SoftAP up and running!
+IP address: 	192.168.4.1
+I>WiFi init done
+ESP32 soft AP started
+
+I>Init done
+[E][sd_diskio.cpp:123] sdSelectCard(): Select Failed
+Reading UDP packets...I>Configured for log: 
+Application Log
+I> ADC raw: 3.1750
+I> TH0: 23.3 deg C
+DeltaT: 23.2725
+SD Type: SD
+SD Card Size: 1886MB
+I>SD init done
+I> ADC raw: 3.1750
+I> TH0: 23.3 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1752
+I> TH0: 23.3 deg C
+DeltaT: 0.0363
+I> ADC raw: 3.1752
+I> TH0: 23.3 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1754
+I> TH0: 23.3 deg C
+DeltaT: 0.0365
+I> ADC raw: 3.1752
+I> TH0: 23.3 deg C
+DeltaT: 0.0365
+I> ADC raw: 3.1754
+I> TH0: 23.3 deg C
+DeltaT: 0.0365
+I> ADC raw: 3.1754
+I> TH0: 23.3 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1752
+I> TH0: 23.3 deg C
+DeltaT: 0.0365
+I> ADC raw: 3.1754
+I> TH0: 23.3 deg C
+DeltaT: 0.0365
+I> ADC raw: 3.1754
+I> TH0: 23.3 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1756
+I> TH0: 23.4 deg C
+DeltaT: 0.0366
+I> ADC raw: 3.1756
+I> TH0: 23.4 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1756
+I> TH0: 23.4 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1756
+I> TH0: 23.4 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1709
+I> TH0: 22.5 deg C
+DeltaT: 0.8823
+I> ADC raw: 3.1559
+I> TH0: 20.1 deg C
+DeltaT: 2.4376
+I> ADC raw: 3.1462
+I> TH0: 28.7 deg C
+DeltaT: 8.6300
+I> ADC raw: 3.1388
+I> TH0: 27.3 deg C
+DeltaT: 1.3656
+I> ADC raw: 3.1332
+I> TH0: 26.4 deg C
+DeltaT: 0.9690
+I> ADC raw: 3.1289
+I> TH0: 25.7 deg C
+DeltaT: 0.6997
+I> ADC raw: 3.1252
+I> TH0: 25.1 deg C
+DeltaT: 0.5804
+I> ADC raw: 3.1248
+I> TH0: 25.0 deg C
+DeltaT: 0.0567
+I> ADC raw: 3.1261
+I> TH0: 25.2 deg C
+DeltaT: 0.1994
+I> ADC raw: 3.1278
+I> TH0: 25.5 deg C
+DeltaT: 0.2609
+I> ADC raw: 3.1293
+I> TH0: 25.7 deg C
+DeltaT: 0.2362
+I> ADC raw: 3.1310
+I> TH0: 26.0 deg C
+DeltaT: 0.2708
+I> ADC raw: 3.1325
+I> TH0: 26.2 deg C
+DeltaT: 0.2453
+I> ADC raw: 3.1340
+I> TH0: 26.5 deg C
+DeltaT: 0.2497
+I> ADC raw: 3.1355
+I> TH0: 26.7 deg C
+DeltaT: 0.2542
+I> ADC raw: 3.1370
+I> TH0: 27.0 deg C
+DeltaT: 0.2589
+I> ADC raw: 3.1383
+I> TH0: 27.2 deg C
+DeltaT: 0.2305
+I> ADC raw: 3.1398
+I> TH0: 27.5 deg C
+DeltaT: 0.2680
+I> ADC raw: 3.1409
+I> TH0: 27.7 deg C
+DeltaT: 0.2044
+I> ADC raw: 3.1424
+I> TH0: 28.0 deg C
+DeltaT: 0.2770
+I> ADC raw: 3.1433
+I> TH0: 28.2 deg C
+DeltaT: 0.1758
+I> ADC raw: 3.1439
+I> TH0: 28.3 deg C
+DeltaT: 0.1065
+I> ADC raw: 3.1443
+I> TH0: 28.3 deg C
+DeltaT: 0.0714
+I> ADC raw: 3.1454
+I> TH0: 28.5 deg C
+DeltaT: 0.2164
+I> ADC raw: 3.1465
+I> TH0: 28.8 deg C
+DeltaT: 0.2196
+I> ADC raw: 3.1469
+I> TH0: 28.8 deg C
+DeltaT: 0.0739
+I> ADC raw: 3.1478
+I> TH0: 29.0 deg C
+DeltaT: 0.1863
+I> ADC raw: 3.1490
+I> TH0: 29.3 deg C
+DeltaT: 0.2267
+I> ADC raw: 3.1499
+I> TH0: 29.4 deg C
+DeltaT: 0.1915
+I> ADC raw: 3.1508
+I> TH0: 29.6 deg C
+DeltaT: 0.1939
+I> ADC raw: 3.1518
+I> TH0: 29.8 deg C
+DeltaT: 0.1963
+I> ADC raw: 3.1525
+I> TH0: 19.6 deg C
+DeltaT: 10.2523
+I> ADC raw: 3.1533
+I> TH0: 19.7 deg C
+DeltaT: 0.1048
+I> ADC raw: 3.1535
+I> TH0: 19.7 deg C
+DeltaT: 0.0264
+I> ADC raw: 3.1544
+I> TH0: 19.8 deg C
+DeltaT: 0.1328
+I> ADC raw: 3.1552
+I> TH0: 20.0 deg C
+DeltaT: 0.1075
+I> ADC raw: 3.1559
+I> TH0: 20.1 deg C
+DeltaT: 0.1086
+I> ADC raw: 3.1565
+I> TH0: 20.1 deg C
+DeltaT: 0.0822
+I> ADC raw: 3.1574
+I> TH0: 20.3 deg C
+DeltaT: 0.1385
+I> ADC raw: 3.1567
+I> TH0: 20.2 deg C
+DeltaT: 0.1109
+I> ADC raw: 3.1553
+I> TH0: 20.0 deg C
+DeltaT: 0.1913
+I> ADC raw: 3.1512
+I> TH0: 29.7 deg C
+DeltaT: 9.7357
+I> ADC raw: 3.1403
+I> TH0: 27.6 deg C
+DeltaT: 2.1198
+I> ADC raw: 3.1325
+I> TH0: 26.2 deg C
+DeltaT: 1.3632
+I> ADC raw: 3.1270
+I> TH0: 25.4 deg C
+DeltaT: 0.8688
+I> ADC raw: 3.1231
+I> TH0: 24.8 deg C
+DeltaT: 0.5958
+I> ADC raw: 3.1199
+I> TH0: 24.3 deg C
+DeltaT: 0.4632
+I> ADC raw: 3.1173
+I> TH0: 35.0 deg C
+DeltaT: 10.7429
+I> ADC raw: 3.1156
+I> TH0: 34.7 deg C
+DeltaT: 0.3395
+I> ADC raw: 3.1139
+I> TH0: 34.4 deg C
+DeltaT: 0.3334
+I> ADC raw: 3.1124
+I> TH0: 34.1 deg C
+DeltaT: 0.2913
+I> ADC raw: 3.1113
+I> TH0: 33.9 deg C
+DeltaT: 0.2154
+I> ADC raw: 3.1100
+I> TH0: 33.6 deg C
+DeltaT: 0.2481
+I> ADC raw: 3.1094
+I> TH0: 33.5 deg C
+DeltaT: 0.1053
+I> ADC raw: 3.1087
+I> TH0: 33.4 deg C
+DeltaT: 0.1394
+I> ADC raw: 3.1081
+I> TH0: 33.3 deg C
+DeltaT: 0.1039
+I> ADC raw: 3.1075
+I> TH0: 33.2 deg C
+DeltaT: 0.1032
+I> ADC raw: 3.1081
+I> TH0: 33.3 deg C
+DeltaT: 0.1032
+I> ADC raw: 3.1105
+I> TH0: 33.7 deg C
+DeltaT: 0.4545
+I> ADC raw: 3.1128
+I> TH0: 34.2 deg C
+DeltaT: 0.4300
+I> ADC raw: 3.1147
+I> TH0: 34.5 deg C
+DeltaT: 0.3663
+I> ADC raw: 3.1167
+I> TH0: 34.9 deg C
+DeltaT: 0.4116
+I> ADC raw: 3.1184
+I> TH0: 35.3 deg C
+DeltaT: 0.3437
+I> ADC raw: 3.1203
+I> TH0: 24.4 deg C
+DeltaT: 10.9192
+I> ADC raw: 3.1218
+I> TH0: 24.6 deg C
+DeltaT: 0.2168
+I> ADC raw: 3.1238
+I> TH0: 24.9 deg C
+DeltaT: 0.3042
+I> ADC raw: 3.1253
+I> TH0: 25.1 deg C
+DeltaT: 0.2257
+I> ADC raw: 3.1272
+I> TH0: 25.4 deg C
+DeltaT: 0.2877
+I> ADC raw: 3.1287
+I> TH0: 25.6 deg C
+DeltaT: 0.2347
+I> ADC raw: 3.1304
+I> TH0: 25.9 deg C
+DeltaT: 0.2690
+I> ADC raw: 3.1321
+I> TH0: 26.2 deg C
+DeltaT: 0.2744
+I> ADC raw: 3.1338
+I> TH0: 26.5 deg C
+DeltaT: 0.2800
+I> ADC raw: 3.1351
+I> TH0: 26.7 deg C
+DeltaT: 0.2217
+I> ADC raw: 3.1366
+I> TH0: 26.9 deg C
+DeltaT: 0.2577
+I> ADC raw: 3.1379
+I> TH0: 27.2 deg C
+DeltaT: 0.2294
+I> ADC raw: 3.1388
+I> TH0: 27.3 deg C
+DeltaT: 0.1662
+I> ADC raw: 3.1403
+I> TH0: 27.6 deg C
+DeltaT: 0.2699
+I> ADC raw: 3.1417
+I> TH0: 27.8 deg C
+DeltaT: 0.2404
+I> ADC raw: 3.1428
+I> TH0: 28.0 deg C
+DeltaT: 0.2092
+I> ADC raw: 3.1439
+I> TH0: 28.3 deg C
+DeltaT: 0.2123
+I> ADC raw: 3.1452
+I> TH0: 28.5 deg C
+DeltaT: 0.2515
+I> ADC raw: 3.1463
+I> TH0: 28.7 deg C
+DeltaT: 0.2190
+I> ADC raw: 3.1473
+I> TH0: 28.9 deg C
+DeltaT: 0.1850
+I> ADC raw: 3.1484
+I> TH0: 29.1 deg C
+DeltaT: 0.2250
+I> ADC raw: 3.1493
+I> TH0: 29.3 deg C
+DeltaT: 0.1901
+I> ADC raw: 3.1505
+I> TH0: 29.6 deg C
+DeltaT: 0.2312
+I> ADC raw: 3.1512
+I> TH0: 29.7 deg C
+DeltaT: 0.1561
+I> ADC raw: 3.1523
+I> TH0: 19.6 deg C
+DeltaT: 10.1603
+I> ADC raw: 3.1531
+I> TH0: 19.7 deg C
+DeltaT: 0.1045
+I> ADC raw: 3.1538
+I> TH0: 19.8 deg C
+DeltaT: 0.1056
+I> ADC raw: 3.1546
+I> TH0: 19.9 deg C
+DeltaT: 0.1067
+I> ADC raw: 3.1555
+I> TH0: 20.0 deg C
+DeltaT: 0.1349
+I> ADC raw: 3.1565
+I> TH0: 20.1 deg C
+DeltaT: 0.1367
+I> ADC raw: 3.1570
+I> TH0: 20.2 deg C
+DeltaT: 0.0829
+I> ADC raw: 3.1578
+I> TH0: 20.3 deg C
+DeltaT: 0.1115
+I> ADC raw: 3.1585
+I> TH0: 20.5 deg C
+DeltaT: 0.1127
+I> ADC raw: 3.1589
+I> TH0: 20.5 deg C
+DeltaT: 0.0568
+I> ADC raw: 3.1595
+I> TH0: 20.6 deg C
+DeltaT: 0.0858
+I> ADC raw: 3.1598
+I> TH0: 20.7 deg C
+DeltaT: 0.0576
+I> ADC raw: 3.1604
+I> TH0: 20.7 deg C
+DeltaT: 0.0869
+I> ADC raw: 3.1610
+I> TH0: 20.8 deg C
+DeltaT: 0.0876
+I> ADC raw: 3.1612
+I> TH0: 20.9 deg C
+DeltaT: 0.0294
+I> ADC raw: 3.1617
+I> TH0: 20.9 deg C
+DeltaT: 0.0886
+I> ADC raw: 3.1621
+I> TH0: 21.0 deg C
+DeltaT: 0.0594
+I> ADC raw: 3.1627
+I> TH0: 21.1 deg C
+DeltaT: 0.0898
+I> ADC raw: 3.1628
+I> TH0: 21.1 deg C
+DeltaT: 0.0301
+I> ADC raw: 3.1634
+I> TH0: 21.2 deg C
+DeltaT: 0.0908
+I> ADC raw: 3.1638
+I> TH0: 21.3 deg C
+DeltaT: 0.0609
+I> ADC raw: 3.1642
+I> TH0: 21.3 deg C
+DeltaT: 0.0613
+I> ADC raw: 3.1645
+I> TH0: 21.4 deg C
+DeltaT: 0.0616
+I> ADC raw: 3.1649
+I> TH0: 21.5 deg C
+DeltaT: 0.0619
+I> ADC raw: 3.1651
+I> TH0: 21.5 deg C
+DeltaT: 0.0311
+I> ADC raw: 3.1655
+I> TH0: 21.6 deg C
+DeltaT: 0.0625
+I> ADC raw: 3.1658
+I> TH0: 21.6 deg C
+DeltaT: 0.0628
+I> ADC raw: 3.1662
+I> TH0: 21.7 deg C
+DeltaT: 0.0632
+I> ADC raw: 3.1662
+I> TH0: 21.7 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1668
+I> TH0: 21.8 deg C
+DeltaT: 0.0954
+I> ADC raw: 3.1670
+I> TH0: 21.8 deg C
+DeltaT: 0.0320
+I> ADC raw: 3.1673
+I> TH0: 21.9 deg C
+DeltaT: 0.0642
+I> ADC raw: 3.1675
+I> TH0: 21.9 deg C
+DeltaT: 0.0323
+I> ADC raw: 3.1677
+I> TH0: 21.9 deg C
+DeltaT: 0.0323
+I> ADC raw: 3.1681
+I> TH0: 22.0 deg C
+DeltaT: 0.0650
+I> ADC raw: 3.1681
+I> TH0: 22.0 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1685
+I> TH0: 22.1 deg C
+DeltaT: 0.0653
+I> ADC raw: 3.1688
+I> TH0: 22.1 deg C
+DeltaT: 0.0657
+I> ADC raw: 3.1688
+I> TH0: 22.1 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1690
+I> TH0: 22.2 deg C
+DeltaT: 0.0330
+I> ADC raw: 3.1694
+I> TH0: 22.2 deg C
+DeltaT: 0.0663
+I> ADC raw: 3.1694
+I> TH0: 22.2 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1698
+I> TH0: 22.3 deg C
+DeltaT: 0.0667
+I> ADC raw: 3.1698
+I> TH0: 22.3 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1700
+I> TH0: 22.3 deg C
+DeltaT: 0.0335
+I> ADC raw: 3.1702
+I> TH0: 22.4 deg C
+DeltaT: 0.0336
+I> ADC raw: 3.1702
+I> TH0: 22.4 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1705
+I> TH0: 22.4 deg C
+DeltaT: 0.0674
+I> ADC raw: 3.1703
+I> TH0: 22.4 deg C
+DeltaT: 0.0338
+I> ADC raw: 3.1705
+I> TH0: 22.4 deg C
+DeltaT: 0.0338
+I> ADC raw: 3.1705
+I> TH0: 22.4 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1707
+I> TH0: 22.5 deg C
+DeltaT: 0.0339
+I> ADC raw: 3.1707
+I> TH0: 22.5 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1711
+I> TH0: 22.5 deg C
+DeltaT: 0.0680
+I> ADC raw: 3.1711
+I> TH0: 22.5 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1713
+I> TH0: 22.6 deg C
+DeltaT: 0.0342
+I> ADC raw: 3.1715
+I> TH0: 22.6 deg C
+DeltaT: 0.0343
+I> ADC raw: 3.1717
+I> TH0: 22.6 deg C
+DeltaT: 0.0344
+I> ADC raw: 3.1717
+I> TH0: 22.6 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1718
+I> TH0: 22.7 deg C
+DeltaT: 0.0345
+I> ADC raw: 3.1720
+I> TH0: 22.7 deg C
+DeltaT: 0.0346
+I> ADC raw: 3.1720
+I> TH0: 22.7 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1720
+I> TH0: 22.7 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1724
+I> TH0: 22.8 deg C
+DeltaT: 0.0694
+I> ADC raw: 3.1722
+I> TH0: 22.7 deg C
+DeltaT: 0.0348
+I> ADC raw: 3.1726
+I> TH0: 22.8 deg C
+DeltaT: 0.0696
+I> ADC raw: 3.1724
+I> TH0: 22.8 deg C
+DeltaT: 0.0349
+I> ADC raw: 3.1728
+I> TH0: 22.8 deg C
+DeltaT: 0.0698
+I> ADC raw: 3.1728
+I> TH0: 22.8 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1730
+I> TH0: 22.9 deg C
+DeltaT: 0.0351
+I> ADC raw: 3.1732
+I> TH0: 22.9 deg C
+DeltaT: 0.0352
+I> ADC raw: 3.1733
+I> TH0: 23.0 deg C
+DeltaT: 0.0353
+I> ADC raw: 3.1732
+I> TH0: 22.9 deg C
+DeltaT: 0.0353
+I> ADC raw: 3.1733
+I> TH0: 23.0 deg C
+DeltaT: 0.0353
+I> ADC raw: 3.1735
+I> TH0: 23.0 deg C
+DeltaT: 0.0354
+I> ADC raw: 3.1737
+I> TH0: 23.0 deg C
+DeltaT: 0.0355
+I> ADC raw: 3.1737
+I> TH0: 23.0 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1737
+I> TH0: 23.0 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1739
+I> TH0: 23.1 deg C
+DeltaT: 0.0356
+I> ADC raw: 3.1741
+I> TH0: 23.1 deg C
+DeltaT: 0.0357
+I> ADC raw: 3.1743
+I> TH0: 23.1 deg C
+DeltaT: 0.0358
+I> ADC raw: 3.1739
+I> TH0: 23.1 deg C
+DeltaT: 0.0715
+I> ADC raw: 3.1743
+I> TH0: 23.1 deg C
+DeltaT: 0.0715
+I> ADC raw: 3.1743
+I> TH0: 23.1 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1743
+I> TH0: 23.1 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1743
+I> TH0: 23.1 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1745
+I> TH0: 23.2 deg C
+DeltaT: 0.0359
+I> ADC raw: 3.1745
+I> TH0: 23.2 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1745
+I> TH0: 23.2 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1745
+I> TH0: 23.2 deg C
+DeltaT: 0.0000
+I> ADC raw: 3.1747
+I> TH0: 23.2 deg C
+DeltaT: 0.0360
+I> ADC raw: 3.1745
+I> TH0: 23.2 deg C
+DeltaT: 0.0360
+I> ADC raw: 3.1747
+I> TH0: 23.2 deg C
+DeltaT: 0.0360
+I> ADC raw: 3.1743
+I> TH0: 23.1 deg C
+DeltaT: 0.0719
+I> ADC raw: 3.1747
+I> TH0: 23.2 deg C
+DeltaT: 0.0719
+I> ADC raw: 3.1745
+I> TH0: 23.2 deg C
+DeltaT: 0.0360

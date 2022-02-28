@@ -523,13 +523,12 @@ void handleADC(void *param)
 {
   while (1)
   {
+    double adcRawRead = 0.0;
     volatile double oldTemp;
     if (FFF_Adc_isReady())
     {
-      hotendTemp = LookupTemperature((double) FFF_Adc_readVolt(EXT_ADC_TEMP_CHANNEL), &thermistor0Lut);
-      // Serial.print("I> TH0: ");
-      // Serial.print(hotendTemp, 1);
-      // Serial.println(" deg C");
+      adcRawRead = FFF_Adc_readVolt(EXT_ADC_TEMP_CHANNEL);
+      hotendTemp = LookupTemperature(adcRawRead, &thermistor0Lut);
     }
 
     double diff = hotendTemp - oldTemp; 
@@ -537,8 +536,16 @@ void handleADC(void *param)
     {
       diff *= -1;
     }
+
+#if DEBUG_ADC == TRUE
+    Serial.print("I> ADC raw: ");
+    Serial.println(adcRawRead, 4);
+    Serial.print("I> TH0: ");
+    Serial.print(hotendTemp, 1);
+    Serial.println(" deg C");
     Serial.print("DeltaT: ");
     Serial.println(diff, 4);
+#endif
 
     if (diff > MAX_TEMP_DELTA_DEG)
     {
