@@ -16,6 +16,7 @@
 #include <FFF_Oled.h>
 #include <FFF_Graphics.h>
 #include <FFF_Credentials.h>
+#include <FFF_Heater.h>
 #include <FFF_Thermistors.h>
 
 
@@ -38,7 +39,7 @@ void InitializeSD(void *param);
 void handleUdp(void *param);
 void handleOled(void *param);
 void handleLog(void *param);
-void handleMotorPID(void *param);
+void handleDiameterMotorPID(void *param);
 void handleTempPID(void *param);
 void handleADC(void *param);
 void handleFPGA(void *param);
@@ -62,16 +63,17 @@ TaskHandle_t FPGATaskHandle;
 // Prototypes
 void FFF_Udp_init();
 
-double LookupTemperature(double volts, FFF_Lut* lutPtr);
+double LookupTemperature(double volts, FFF_Lut* lutPtr); 
+//Steinhart-Hart
 
 //PID
 double filDiameterMm = 0.0;
 double targetDiameterMm = TARGET_DIAMETER;
 double pwmFrequency = 0.0;
 
-double kp_mot = 0.0;
-double ki_mot = 0.0;
-double kd_mot = 0.0;
+double kp_mot = KP_PULL_MOT_DEFAULT; 
+double ki_mot = KI_PULL_MOT_DEFAULT;
+double kd_mot = KP_PULL_MOT_DEFAULT;
 
 PID pidMotControl(&filDiameterMm, &pwmFrequency, &targetDiameterMm, kp_mot, ki_mot, kd_mot, AUTOMATIC);
 
@@ -230,7 +232,7 @@ void CreateAppTasks()
       &LogTaskHandle);
 
   xTaskCreate(
-      handleMotorPID,      // Function that should be called
+      handleDiameterMotorPID,      // Function that should be called
       "PID Motor Handler", // Name of the task (for debugging)
       8192,                // Stack size (bytes)
       NULL,                // Parameter to pass
@@ -494,17 +496,20 @@ void handleTempPID(void *param)
 {
   while (1)
   {
+    pidTempControl.Compute();
+    // Provide the values to the heaters 
 
     vTaskDelay(PID_TEMP_INTERVAL_MS);
   }
 }
 
 
-void handleMotorPID(void *param)
+void handleDiameterMotorPID(void *param)
 {
   while (1)
   {
-
+    pidMotControl.Compute();
+    // Provide the values to the steppers 
     vTaskDelay(PID_DIAMETER_INTERVAL_MS);
   }
 }
@@ -568,7 +573,7 @@ void FFF_Udp_init()
 
 
 
-/* TODO: Implement something better like STeinhart-Hart method */
+/* TODO: Implement something better like Steinhart-Hart method */
 double LookupTemperature(double volts, FFF_Lut* lutPtr)
 {
   // Traverse the lut and search for the point that comes nearest
@@ -692,3 +697,5 @@ double LookupTemperature(double volts, FFF_Lut* lutPtr)
 
   return -999;
 }
+
+// > Insert Steinhart Hart here

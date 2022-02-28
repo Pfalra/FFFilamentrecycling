@@ -43,6 +43,10 @@
 #define EXT_ADC_ADDR 0x48
 #define EXT_ADC_TEMP_CHANNEL 3
 
+/* PID */
+#define KP_PULL_MOT_DEFAULT 1.0
+#define KI_PULL_MOT_DEFAULT 1.0
+#define KD_PULL_MOT_DEFAULT 1.0
 
 /* UDP */
 #define UDP_PORT 666 // Doom intensifies
