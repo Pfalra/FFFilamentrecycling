@@ -1,0 +1,319 @@
+�
+FFF Device starting up...
+Starting OLED
+Showing Logo
+I>Starting WiFi.
+
+I>Initializing other hardware/software
+
+I> ADC connected
+I> ADC Ready
+I> ADC initialized for channel: 3
+WiFi SSID: FFF-Device
+WiFi PWD: FFF-Device2022
+
+
+> SoftAP up and running!
+IP address: 	192.168.4.1
+I>WiFi init done
+ESP32 soft AP started
+
+I>Init done
+[E][sd_diskio.cpp:123] sdSelectCard(): Select Failed
+Reading UDP packets...I>Configured for log: 
+Application Log
+DeltaT: 21.8065
+Delta not hit
+0.0000
+21.8065
+SD Type: SD
+SD Card Size: 1886MB
+I>SD init done
+DeltaT: 21.8385
+Delta not hit
+0.0000
+21.8385
+DeltaT: 21.9029
+Delta not hit
+0.0000
+21.9029
+DeltaT: 21.9353
+Delta not hit
+0.0000
+21.9353
+DeltaT: 22.0329
+Delta not hit
+0.0000
+22.0329
+DeltaT: 22.0984
+Delta not hit
+0.0000
+22.0984
+DeltaT: 22.1313
+Delta not hit
+0.0000
+22.1313
+DeltaT: 22.1974
+Delta not hit
+0.0000
+22.1974
+DeltaT: 22.2639
+Delta not hit
+0.0000
+22.2639
+DeltaT: 22.3307
+Delta not hit
+0.0000
+22.3307
+DeltaT: 22.3980
+Delta not hit
+0.0000
+22.3980
+DeltaT: 22.4656
+Delta not hit
+0.0000
+22.4656
+DeltaT: 22.4996
+Delta not hit
+0.0000
+22.4996
+DeltaT: 22.5678
+Delta not hit
+0.0000
+22.5678
+DeltaT: 22.5678
+Delta not hit
+0.0000
+22.5678
+DeltaT: 22.6364
+Delta not hit
+0.0000
+22.6364
+DeltaT: 22.6709
+Delta not hit
+0.0000
+22.6709
+DeltaT: 22.7401
+Delta not hit
+0.0000
+22.7401
+DeltaT: 22.7401
+Delta not hit
+0.0000
+22.7401
+DeltaT: 22.8097
+Delta not hit
+0.0000
+22.8097
+DeltaT: 22.8097
+Delta not hit
+0.0000
+22.8097
+DeltaT: 22.8798
+Delta not hit
+0.0000
+22.8798
+DeltaT: 22.8798
+Delta not hit
+0.0000
+22.8798
+DeltaT: 22.9502
+Delta not hit
+0.0000
+22.9502
+DeltaT: 22.9856
+Delta not hit
+0.0000
+22.9856
+DeltaT: 22.9856
+Delta not hit
+0.0000
+22.9856
+DeltaT: 23.0211
+Delta not hit
+0.0000
+23.0211
+DeltaT: 23.0567
+Delta not hit
+0.0000
+23.0567
+DeltaT: 23.1282
+Delta not hit
+0.0000
+23.1282
+DeltaT: 23.1282
+Delta not hit
+0.0000
+23.1282
+DeltaT: 23.2001
+Delta not hit
+0.0000
+23.2001
+DeltaT: 23.2001
+Delta not hit
+0.0000
+23.2001
+DeltaT: 23.2363
+Delta not hit
+0.0000
+23.2363
+DeltaT: 23.2725
+Delta not hit
+0.0000
+23.2725
+DeltaT: 23.2725
+Delta not hit
+0.0000
+23.2725
+DeltaT: 23.3089
+Delta not hit
+0.0000
+23.3089
+DeltaT: 23.3089
+Delta not hit
+0.0000
+23.3089
+DeltaT: 23.3453
+Delta not hit
+0.0000
+23.3453
+DeltaT: 23.3453
+Delta not hit
+0.0000
+23.3453
+DeltaT: 23.3819
+Delta not hit
+0.0000
+23.3819
+DeltaT: 23.3819
+Delta not hit
+0.0000
+23.3819
+DeltaT: 23.4186
+Delta not hit
+0.0000
+23.4186
+DeltaT: 23.4186
+Delta not hit
+0.0000
+23.4186
+DeltaT: 23.4553
+Delta not hit
+0.0000
+23.4553
+DeltaT: 23.4553
+Delta not hit
+0.0000
+23.4553
+DeltaT: 23.4922
+Delta not hit
+0.0000
+23.4922
+DeltaT: 23.4922
+Delta not hit
+0.0000
+23.4922
+DeltaT: 23.5293
+Delta not hit
+0.0000
+23.5293
+DeltaT: 23.5293
+Delta not hit
+0.0000
+23.5293
+DeltaT: 23.5293
+Delta not hit
+0.0000
+23.5293
+DeltaT: 23.5664
+Delta not hit
+0.0000
+23.5664
+DeltaT: 23.5293
+Delta not hit
+0.0000
+23.5293
+DeltaT: 23.5293
+Delta not hit
+0.0000
+23.5293
+DeltaT: 23.5293
+Delta not hit
+0.0000
+23.5293
+DeltaT: 23.5664
+Delta not hit
+0.0000
+23.5664
+DeltaT: 23.5293
+Delta not hit
+0.0000
+23.5293
+DeltaT: 23.6036
+Delta not hit
+0.0000
+23.6036
+DeltaT: 23.5664
+Delta not hit
+0.0000
+23.5664
+DeltaT: 23.5664
+Delta not hit
+0.0000
+23.5664
+DeltaT: 23.6036
+Delta not hit
+0.0000
+23.6036
+DeltaT: 23.5664
+Delta not hit
+0.0000
+23.5664
+DeltaT: 23.6036
+Delta not hit
+0.0000
+23.6036
+DeltaT: 23.6036
+Delta not hit
+0.0000
+23.6036
+DeltaT: 23.6410
+Delta not hit
+0.0000
+23.6410
+DeltaT: 23.6410
+Delta not hit
+0.0000
+23.6410
+DeltaT: 23.6410
+Delta not hit
+0.0000
+23.6410
+DeltaT: 23.6410
+Delta not hit
+0.0000
+23.6410
+DeltaT: 23.6410
+Delta not hit
+0.0000
+23.6410
+DeltaT: 23.6036
+Delta not hit
+0.0000
+23.6036
+DeltaT: 23.6784
+Delta not hit
+0.0000
+23.6784
+DeltaT: 23.6410
+Delta not hit
+0.0000
+23.6410
+DeltaT: 23.6784
+Delta not hit
+0.0000
+23.6784
+DeltaT: 23.6410
+Delta not hit
+0.0000
+23.6410

@@ -1,0 +1,239 @@
+�
+FFF Device starting up...
+Starting OLED
+Showing Logo
+I>Starting WiFi.
+
+I>Initializing other hardware/software
+
+I> ADC connected
+I> ADC Ready
+I> ADC initialized for channel: 3
+WiFi SSID: FFF-Device
+WiFi PWD: FFF-Device2022
+
+
+> SoftAP up and running!
+IP address: 	192.168.4.1
+I>WiFi init done
+ESP32 soft AP started
+
+I>Init done
+[E][sd_diskio.cpp:123] sdSelectCard(): Select Failed
+Reading UDP packets...I>Configured for log: 
+Application Log
+DeltaT: 23.4922
+SD Type: SD
+SD Card Size: 1886MB
+I>SD init done
+DeltaT: 23.5293
+DeltaT: 23.5664
+DeltaT: 23.5664
+DeltaT: 23.5664
+DeltaT: 23.5664
+DeltaT: 23.5664
+DeltaT: 23.6410
+DeltaT: 23.6410
+DeltaT: 23.6410
+DeltaT: 23.6410
+DeltaT: 23.7160
+DeltaT: 23.6410
+DeltaT: 23.7160
+DeltaT: 23.6784
+DeltaT: 23.7160
+DeltaT: 23.6784
+DeltaT: 23.7160
+DeltaT: 23.7160
+DeltaT: 23.7537
+DeltaT: 23.7537
+DeltaT: 23.7537
+DeltaT: 23.7160
+DeltaT: 23.7537
+DeltaT: 23.7160
+DeltaT: 23.7537
+DeltaT: 23.7160
+DeltaT: 23.7537
+DeltaT: 23.7537
+DeltaT: 23.7537
+DeltaT: 23.7915
+DeltaT: 23.7915
+DeltaT: 23.7915
+DeltaT: 23.7915
+DeltaT: 23.7537
+DeltaT: 23.7915
+DeltaT: 23.7915
+DeltaT: 23.8294
+DeltaT: 23.7915
+DeltaT: 23.7915
+DeltaT: 23.7915
+DeltaT: 23.7915
+DeltaT: 23.7915
+DeltaT: 23.8294
+DeltaT: 23.7915
+DeltaT: 23.8675
+DeltaT: 23.7915
+DeltaT: 23.8294
+DeltaT: 23.7915
+DeltaT: 23.8294
+DeltaT: 23.8294
+DeltaT: 23.8294
+DeltaT: 23.8294
+DeltaT: 23.8294
+DeltaT: 23.8675
+DeltaT: 23.8294
+DeltaT: 23.8294
+DeltaT: 23.8675
+DeltaT: 23.8294
+DeltaT: 23.8675
+DeltaT: 23.8294
+DeltaT: 23.8675
+DeltaT: 23.8675
+DeltaT: 23.8675
+DeltaT: 23.8675
+DeltaT: 23.8675
+DeltaT: 23.8675
+DeltaT: 23.8294
+DeltaT: 23.8675
+DeltaT: 23.7915
+DeltaT: 23.8294
+DeltaT: 23.7915
+DeltaT: 23.8294
+DeltaT: 23.7915
+DeltaT: 23.8294
+DeltaT: 23.8294
+DeltaT: 23.8294
+DeltaT: 23.8294
+DeltaT: 23.8675
+DeltaT: 23.8294
+DeltaT: 23.8675
+DeltaT: 23.8294
+DeltaT: 23.8675
+DeltaT: 23.8294
+DeltaT: 23.8675
+DeltaT: 23.8294
+DeltaT: 23.8675
+DeltaT: 23.8675
+DeltaT: 23.8675
+DeltaT: 23.9056
+DeltaT: 23.9056
+DeltaT: 23.9056
+DeltaT: 23.9056
+DeltaT: 23.9056
+DeltaT: 23.9056
+DeltaT: 23.9056
+DeltaT: 23.9056
+DeltaT: 23.9056
+DeltaT: 23.9056
+DeltaT: 23.9056
+DeltaT: 23.9439
+DeltaT: 23.9056
+DeltaT: 23.9439
+Station connected to ESP32 soft AP
+DeltaT: 23.8675
+DeltaT: 23.9439
+DeltaT: 23.9056
+DeltaT: 23.9439
+DeltaT: 23.9439
+DeltaT: 23.9439
+DeltaT: 23.9056
+DeltaT: 23.8294
+DeltaT: 23.8675
+DeltaT: 23.7915
+DeltaT: 23.8294
+DeltaT: 23.8294
+DeltaT: 23.7915
+DeltaT: 23.8294
+DeltaT: 23.7915
+DeltaT: 23.7915
+DeltaT: 23.8294
+DeltaT: 23.8294
+DeltaT: 23.8675
+DeltaT: 23.8294
+DeltaT: 23.8675
+DeltaT: 23.8675
+DeltaT: 23.8294
+DeltaT: 23.9056
+DeltaT: 23.8675
+DeltaT: 23.8675
+DeltaT: 23.8675
+DeltaT: 23.8675
+DeltaT: 23.9056
+DeltaT: 23.8675
+DeltaT: 23.8675
+DeltaT: 23.8675
+DeltaT: 23.8675
+DeltaT: 23.9056
+DeltaT: 23.8675
+DeltaT: 23.9056
+DeltaT: 23.8675
+DeltaT: 23.9056
+DeltaT: 23.9056
+DeltaT: 23.8675
+DeltaT: 23.9056
+DeltaT: 23.9056
+DeltaT: 23.8675
+DeltaT: 23.9439
+DeltaT: 23.8675
+DeltaT: 23.9056
+DeltaT: 23.8675
+DeltaT: 23.8675
+DeltaT: 23.9056
+DeltaT: 23.8675
+DeltaT: 23.9056
+DeltaT: 23.9056
+DeltaT: 23.9439
+DeltaT: 23.8675
+DeltaT: 23.9056
+DeltaT: 23.8675
+DeltaT: 23.9056
+DeltaT: 23.8675
+DeltaT: 23.9056
+DeltaT: 23.8675
+DeltaT: 23.9056
+DeltaT: 23.8675
+DeltaT: 23.9056
+DeltaT: 23.8675
+DeltaT: 23.9056
+DeltaT: 23.8675
+DeltaT: 23.8675
+DeltaT: 23.8675
+DeltaT: 23.8294
+DeltaT: 23.7915
+DeltaT: 23.8294
+DeltaT: 23.8294
+DeltaT: 23.8294
+DeltaT: 23.8294
+DeltaT: 23.7915
+DeltaT: 23.8294
+DeltaT: 23.7915
+DeltaT: 23.7915
+DeltaT: 23.7537
+DeltaT: 23.7160
+DeltaT: 23.7160
+DeltaT: 23.6784
+DeltaT: 23.7160
+DeltaT: 23.7160
+DeltaT: 23.7537
+DeltaT: 23.7160
+DeltaT: 23.7537
+DeltaT: 23.7537
+DeltaT: 23.7915
+DeltaT: 23.7915
+DeltaT: 23.7915
+DeltaT: 23.8294
+DeltaT: 23.7915
+DeltaT: 23.8294
+DeltaT: 23.7537
+DeltaT: 23.8294
+DeltaT: 23.8294
+DeltaT: 23.8294
+DeltaT: 23.8294
+DeltaT: 23.7915
+DeltaT: 23.8675
+DeltaT: 23.8675
+DeltaT: 23.8294
+DeltaT: 23.8675
+DeltaT: 23.8294
+DeltaT: 23.9056
+DeltaT: 23.8675
+DeltaT: 23.8675

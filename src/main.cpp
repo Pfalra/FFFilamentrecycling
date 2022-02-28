@@ -122,6 +122,8 @@ void setup()
   Serial.println("FFF Device starting up...");
   vTaskDelay(200);
 
+  filDiameterMm = 3.5;
+
   appLog.paramStr = paramArr;
   appLog.name = "Application Log";
   appLog.isProtected = false;
@@ -410,6 +412,8 @@ void handleLog(void *param)
 {
   // The logging that should be executed will be passed as param 
   FFF_Log* logPtr = (FFF_Log*) param;
+  Serial.print("I>Configured for log: ");
+  Serial.println(logPtr->name);
   while (1)
   {
     if (logPtr == NULL)
@@ -418,18 +422,27 @@ void handleLog(void *param)
       continue;
     }
 
-    Serial.print("App Status: ");
-    Serial.println(gAppStatus);
-
     if (gAppStatus == APP_RUNNING || gAppStatus == APP_PAUSED) // Also log during pause
     {
+      String tmpStr;
+      tmpStr += hotendTemp;
+      tmpStr += DELIMITER;
+      tmpStr += filDiameterMm;
+      tmpStr += DELIMITER;
+      tmpStr += PullStepper.targetSpeed;
+      tmpStr += DELIMITER;
+      tmpStr += ExtruderStepper.targetSpeed;
+
+      tmpStr.toCharArray(logPtr->dataStr, sizeof(logPtr->dataStr));
       logCount++;
 
       uint32_t time = logCount * LOG_INTERVAL_MS;
       if (logPtr->isActive)
       {
         // Logging is running so the params were already written
-        FFF_SD_writeToFile((File*) logPtr->logFilePtr, logPtr->dataStr);
+        // FFF_SD_writeToFile((File*) logPtr->logFilePtr, logPtr->dataStr);
+        udpConn.println(logPtr->dataStr);
+        Serial.println(logPtr->dataStr);
       }
       else 
       {
@@ -447,15 +460,16 @@ void handleLog(void *param)
         udpConn.println(logPtr->paramStr);
         Serial.println(logPtr->paramStr);
         
-        if (FFF_SD_attachLogFile(logPtr))
-        {
-          // File successfully attached
-          Serial.println("I>File successfully attached");
-          FFF_SD_writeToFile((File*) logPtr->logFilePtr, logPtr->paramStr);
-        }
-        Serial.println("E>File attachment failed");
+        // if (FFF_SD_attachLogFile(logPtr))
+        // {
+        //   // File successfully attached
+        //   Serial.println("I>File successfully attached");
+        //   FFF_SD_writeToFile((File*) logPtr->logFilePtr, logPtr->paramStr);
+        // }
+        // Serial.println("E>File attachment failed");
 
         logPtr->isProtected = false;
+        logPtr->isActive = true;
       }
 
     }
@@ -465,7 +479,7 @@ void handleLog(void *param)
       if (logPtr->isActive)
       {
         Serial.println("I>Detaching file");
-        FFF_SD_detachLogFile(logPtr);
+        // FFF_SD_detachLogFile(logPtr);
       }
 
     }
@@ -500,28 +514,33 @@ void handleADC(void *param)
 {
   while (1)
   {
-    volatile double oldTemp = 0.0;
+    volatile double oldTemp;
     if (FFF_Adc_isReady())
     {
       hotendTemp = LookupTemperature((double) FFF_Adc_readVolt(EXT_ADC_TEMP_CHANNEL), &thermistor0Lut);
-      Serial.print("I> TH0: ");
-      Serial.print(hotendTemp, 1);
-      Serial.println(" deg C");
+      // Serial.print("I> TH0: ");
+      // Serial.print(hotendTemp, 1);
+      // Serial.println(" deg C");
     }
 
-    double diff = oldTemp - hotendTemp; 
+    double diff = hotendTemp - oldTemp; 
     if (diff < 0.0)
     {
       diff *= -1;
     }
+    Serial.print("DeltaT: ");
+    Serial.println(diff, 4);
 
     if (diff > MAX_TEMP_DELTA_DEG)
     {
       // Some erroneous reading so take the previous
       hotendTemp = oldTemp; 
+    } 
+    else 
+    {
+      oldTemp = hotendTemp;
     }
 
-    oldTemp = hotendTemp;
     FFF_Oled_updateTemperature(hotendTemp); 
     
     vTaskDelay(ADC_SAMPLE_INTERVAL_MS);

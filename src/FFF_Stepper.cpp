@@ -20,12 +20,12 @@ void FFF_Stepper_init()
   ExtruderStepper.microsteps = 16;
 
   PullStepper.id = 1;
-  PullStepper.targetSpeed = 0;
+  PullStepper.targetSpeed = 50;
   PullStepper.stepPin = PULLER_STEP_PIN;
   PullStepper.microsteps = 16;
 
   WinchStepper.id = 2;
-  WinchStepper.targetSpeed = 0;
+  WinchStepper.targetSpeed = 56;
   WinchStepper.stepPin = WINCH_STEP_PIN;
   WinchStepper.microsteps = 16;
 
