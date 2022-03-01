@@ -63,7 +63,9 @@ TaskHandle_t FPGATaskHandle;
 // Prototypes
 void FFF_Udp_init();
 
-double LookupTemperature(double volts, FFF_Lut* lutPtr); 
+double LookupTemperature(double volts, FFF_Lut* lutPtr, double measuredRes); 
+void calculateCoeffsSteinhartHart(FFF_Lut* lutPtr, double* aCoeffPtr, double* bCoeffPtr, double* cCoeffPtr, int16_t t1, int16_t t2, int16_t t3);
+double calculateTempSteinhartHart(double a, double b, double c, double resistance);
 //Steinhart-Hart
 
 //PID
@@ -320,6 +322,8 @@ void InitializeOther(void *param)
   // Take first value from ADC
   hotendTemp = FFF_Adc_readVolt(EXT_ADC_TEMP_CHANNEL);
 
+  calculateCoeffsSteinhartHart(...);
+
   /* Initialize Steppers */
   FFF_Stepper_init();
 
@@ -528,7 +532,26 @@ void handleADC(void *param)
     if (FFF_Adc_isReady())
     {
       adcRawRead = FFF_Adc_readVolt(EXT_ADC_TEMP_CHANNEL);
-      hotendTemp = LookupTemperature(adcRawRead, &thermistor0Lut);
+      // Traverse the lut and search for the point that comes nearest
+      double voltDiff = FFF_DEVICE_SUPPLY - adcRawRead;
+      double measuredRes = (adcRawRead * THERMISTOR_PULL_UP_VAL) / (voltDiff);
+      #if DEBUG_LUT_HANDLING==TRUE
+        double pupVal = THERMISTOR_PULL_UP_VAL;
+        Serial.print("D> DIFFVOLTS: ");
+        Serial.println(voltDiff, 4);
+        Serial.print("D> PUPVAL: ");
+        Serial.println(pupVal, 4);
+        Serial.print("D> MEASRES: ");
+        Serial.println(measuredRes, 4);
+      #endif
+
+      #if TEMPERATURE_CALC_METHOD==STEINHART_HART_METHOD
+      // Use Steinhart-Hart
+      hotendTemp = calculateTempSteinhartHart(...);
+      #else
+      hotendTemp = LookupTemperature(adcRawRead, &thermistor0Lut, measuredRes);
+      #endif
+
     }
 
     double diff = hotendTemp - oldTemp; 
@@ -585,23 +608,9 @@ void FFF_Udp_init()
 
 
 /* TODO: Implement something better like Steinhart-Hart method */
-double LookupTemperature(double volts, FFF_Lut* lutPtr)
+double LookupTemperature(double volts, FFF_Lut* lutPtr, double measuredRes)
 {
-  // Traverse the lut and search for the point that comes nearest
-  double voltDiff = FFF_DEVICE_SUPPLY - volts;
   double scaling = lutPtr->scalingFac;
-  double measuredRes = (volts * THERMISTOR_PULL_UP_VAL) / (voltDiff);
-
-#if DEBUG_LUT_HANDLING==TRUE
-  double pupVal = THERMISTOR_PULL_UP_VAL;
-  Serial.print("D> DIFFVOLTS: ");
-  Serial.println(voltDiff, 4);
-  Serial.print("D> PUPVAL: ");
-  Serial.println(pupVal, 4);
-  Serial.print("D> MEASRES: ");
-  Serial.println(measuredRes, 4);
-#endif
-
 
   if (volts <= 0)
   {
@@ -709,4 +718,46 @@ double LookupTemperature(double volts, FFF_Lut* lutPtr)
   return -999;
 }
 
+
 // > Insert Steinhart Hart here
+void calculateCoeffsSteinhartHart(FFF_Lut* lutPtr, double* aCoeffPtr, double* bCoeffPtr, double* cCoeffPtr, int16_t t1, int16_t t2, int16_t t3)
+{
+  const uint16_t maximumLutSize = 256; 
+  double t1Res, t2Res, t3Res;
+  for (int i = 0; i < maximumLutSize && lutPtr->tempPtr[i] != NULL; i++)
+  {
+    uint16_t currTemp = lutPtr->tempPtr[i]; 
+    uint16_t currRes = lutPtr->resPtr[i];
+
+    if (currTemp >= t1 && t1 > -999)
+    {
+      t1Res = currRes;
+      t1 = -1000; // invalidates t1 
+    }
+
+    if (currTemp >= t2 && t2 > -999)
+    {
+      t2Res = currRes;
+      t2 = -1000; // invalidates t1 
+    }
+
+    if (currTemp >= t3 && t3 > -999)
+    {
+      t3Res = currRes;
+      t3 = -1000; // invalidates t1 
+    }
+
+    // T1Res, T2Res, T3Res are now available
+    // Calculate coeffs
+    *aCoeffPtr = ...
+    *bCoeffPtr = ...
+    *cCoeffPtr = ...
+
+  }
+}
+
+double calculateTempSteinhartHart(double a, double b, double c, double resistance)
+{
+
+  return 0.0;
+}

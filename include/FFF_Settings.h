@@ -14,6 +14,11 @@
 #define DELIMITER ";"
 #define FFF_DEVICE_SUPPLY 3.3
 
+/*********************************************************/
+/* TEMPERATURE CALUCLATION METHODS */
+/*********************************************************/
+#define LUT_TRAVERSE_AND_LINEARIZATION 0
+#define STEINHART_HART 1
 
 /*********************************************************/
 /* TARGET VALUES */
@@ -36,10 +41,10 @@
 #define PWM_HEATER_FREQUENCY    2500
 
 /*********************************************************/
-
-#define A 0.7422
-#define B 0.4851
-#define C 0.0015
+#define TEMPERATURE_CALC_METHOD STEINHART_HART_METHOD
+#define T1_TEMP 0
+#define T2_TEMP 100
+#define T3_TEMP 220
 
 /* ANALYZER */
 /*********************************************************/
