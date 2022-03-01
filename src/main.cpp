@@ -155,8 +155,8 @@ void setup()
   /* Create tasks for initialization */
   CreateAppInitTasks();
 
-  /* Create Tasks for application */
-  CreateAppTasks();
+  // /* Create Tasks for application */
+  // CreateAppTasks();
 }
 
 
@@ -511,9 +511,16 @@ void handleDiameterMotorPID(void *param)
 {
   while (1)
   {
-    pidMotControl.Compute();
+    Serial.print("App Status: ");
+    Serial.println(gAppStatus);
+    // pidMotControl.Compute(); // <<< Does not make sense without any input from FPGA box
     // Provide the values to the steppers 
-    // FFF_Stepper_runStepsPerSecond(&pullStepper, pwmFrequency);
+    Serial.print("PWM for motor: ");
+    Serial.println(pwmFrequency);
+
+#if DEBUG_STEPPER == TRUE
+    FFF_Stepper_runStepsPerSecond(&pullStepper, 500);
+#endif
     vTaskDelay(PID_DIAMETER_INTERVAL_MS);
   }
 }
