@@ -12,43 +12,54 @@ Adafruit_SSD1306 oled(OLED_WIDTH_PX, OLED_HEIGHT_PX);
 
 typedef struct
 {
-    char shortName[OLED_MAX_CHARS];
+    String shortName;
     uint8_t lineNum;
     uint8_t textSize;
-    char chars[OLED_MAX_CHARS];
+    String outputStr;
+    String unitStr;
 } DisplayLine;
 
 
-DisplayLine tempLine;
-DisplayLine diameterLine;
-DisplayLine extVelLine;
-DisplayLine pullVelLine;
+DisplayLine tempLine = 
+{
+    "T0",                       // shortName
+    1,                          // lineNumber
+    1,                          // textSize
+    "" + DUMMY_VAL_TEMPERATURE, // Dummy
+    "degC"                      // unit
+};
+
+DisplayLine diameterLine = 
+{
+    "DIA",
+    0,
+    1,
+    "1.75",
+    "mm"
+};
+
+DisplayLine extVelLine = 
+{
+    "SPS",
+    2,
+    1,
+    "" + DUMMY_VAL_EXTMOT_SPEED,
+    "mm"
+};
+
+DisplayLine pullVelLine = 
+{
+    "SPS",
+    3,
+    1,
+    "" + DUMMY_VAL_PULLMOT_SPEED,
+    "mm"
+};
 
 DisplayLine* lineArr[] = {&tempLine, &diameterLine, &extVelLine, &pullVelLine, NULL};
 
 /* Graphics */
 extern const uint8_t myFFFLogo[];
-
-
-// FIXME: This cannot be the most elegant way of handling it 
-void initTextLayout()
-{
-    tempLine.lineNum = 0;
-    tempLine.textSize = 1;
-    tempLine.chars[OLED_MAX_CHARS-1] = '\0';
-
-    diameterLine.lineNum = 1;
-    diameterLine.textSize = 2;
-    diameterLine.chars[OLED_MAX_CHARS-1] = '\0';
-
-    extVelLine.lineNum = 2;
-    extVelLine.textSize = 1;
-    extVelLine.chars[OLED_MAX_CHARS-1] = '\0';
-
-    pullVelLine.lineNum = 3;
-    pullVelLine.textSize = 1;
-    pullVelLine.chars[OLED_MAX_CHARS-1] = '\0';
-}
 
 
 void FFF_Oled_init()
@@ -78,7 +89,6 @@ void FFF_Oled_init()
     oled.display();
     Serial.println("Showing Logo");
 
-    initTextLayout();
     /* Show the main menu after startup*/
     vTaskDelay(1000);
     FFF_Oled_clearDisplay();
@@ -93,31 +103,31 @@ void FFF_Oled_init()
 
 void FFF_Oled_updateTemperature(double tempVal)
 {
-    snprintf(tempLine.chars, OLED_MAX_CHARS - 1, "%.1f  degC", tempVal);
-    // Serial.println(tempLine.chars);
+    String tempValStr = String(tempVal, 2);
+    tempLine.outputStr = tempValStr;
     FFF_Oled_updateDisplay();
 }
 
 
 void FFF_Oled_updateDiameter(double diaVal)
 {
-    snprintf(diameterLine.chars, OLED_MAX_CHARS - 1, "%.2fmm", diaVal);
-    // Serial.println(tempLine.chars);
+    String diaValStr = String(diaVal, 2);
+    diameterLine.outputStr = diaValStr;
     FFF_Oled_updateDisplay();
 }
 
 
 void FFF_Oled_updateExtruderMotSpeed(double motSpeed)
 {
-    snprintf(extVelLine.chars, OLED_MAX_CHARS - 1, "%u steps/s", (uint16_t) motSpeed);
-    // Serial.println(extVelLine.chars);
+    String motSpeedStr = String(motSpeed, 2);
+    extVelLine.outputStr = motSpeedStr;
     FFF_Oled_updateDisplay();
 }
 
 void FFF_Oled_updatePullMotSpeed(double motSpeed)
 {
-    snprintf(pullVelLine.chars, OLED_MAX_CHARS - 1, "%u steps/s", (uint16_t) motSpeed);
-    // Serial.println(pullVelLine.chars);
+    String pullMotStr = String(motSpeed, 2);
+    pullVelLine.outputStr = pullMotStr;
     FFF_Oled_updateDisplay();
 }
 
@@ -128,8 +138,9 @@ void FFF_Oled_updateDisplay()
     oled.setCursor(1,0);
     for (int i = 0; lineArr[i] != NULL; i++)
     {
+        String tmpStr = lineArr[i]->shortName + ":" + lineArr[i]->outputStr + " " + lineArr[i]->unitStr;
         oled.setTextSize(lineArr[i]->textSize);
-        oled.println(lineArr[i]->chars);
+        oled.println(tmpStr);
 #if DEBUG_OLED == TRUE
         Serial.print("Display showing: ");
         Serial.println(lineArr[i]->chars);

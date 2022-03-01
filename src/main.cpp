@@ -513,7 +513,7 @@ void handleDiameterMotorPID(void *param)
   {
     pidMotControl.Compute();
     // Provide the values to the steppers 
-    FFF_Stepper_runStepsPerSecond(&pullStepper, pwmFrequency);
+    // FFF_Stepper_runStepsPerSecond(&pullStepper, pwmFrequency);
     vTaskDelay(PID_DIAMETER_INTERVAL_MS);
   }
 }

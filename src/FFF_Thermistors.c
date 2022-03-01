@@ -20,6 +20,6 @@ FFF_Lut thermistor0Lut =
     .scalingFac = THERM_SCALING
 };
 
-//Steinhart-Hart
-T = 1 / {A + B[ln(NTC3950_RESISTANCE)] + C[ln(NTC3950_RESISTANCE)]^3}
+// //Steinhart-Hart
+// T = 1 / {A + B[ln(NTC3950_RESISTANCE)] + C[ln(NTC3950_RESISTANCE)]^3}
 

@@ -36,11 +36,6 @@
 #define PWM_HEATER_FREQUENCY    2500
 
 /*********************************************************/
-
-#define A 0.7422
-#define B 0.4851
-#define C 0.0015
-
 /* ANALYZER */
 /*********************************************************/
 #define MEANFILTER_ACTIVE       TRUE
