@@ -1,6 +1,7 @@
 #include <FFF_Thermistors.h>
 #include <FFF_Types.h>
 #include <Arduino.h>
+#include <math.h>
 
 #if FFF_THERMISTOR0 == NTC_3950
 #define THERM_SCALING NTC3950_BASE
@@ -18,3 +19,7 @@ FFF_Lut thermistor0Lut =
     .resPtr = thermistor0_resistances,
     .scalingFac = THERM_SCALING
 };
+
+//Steinhart-Hart
+T = 1 / {A + B[ln(NTC3950_RESISTANCE)] + C[ln(NTC3950_RESISTANCE)]^3}
+
