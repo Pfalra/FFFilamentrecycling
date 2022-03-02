@@ -5,6 +5,7 @@
 #include <FS.h>
 #include <PID_v1.h>
 #include <WiFiUDP.h>
+#include <math.h>
 
 /* FFF includes */
 #include <FFF_Types.h>
@@ -64,9 +65,16 @@ TaskHandle_t FPGATaskHandle;
 void FFF_Udp_init();
 
 double LookupTemperature(double volts, FFF_Lut* lutPtr, double measuredRes); 
+
+//Steinhart-Hart
+double steinhartCoeff_A;
+double steinhartCoeff_B;
+double steinhartCoeff_C;
+
+// void getCoefficients(&thermistor0Lut, &steinhartCoeff_A, &steinhartCoeff_B, &steinhartCoeff_C); //
+
 void calculateCoeffsSteinhartHart(FFF_Lut* lutPtr, double* aCoeffPtr, double* bCoeffPtr, double* cCoeffPtr, int16_t t1, int16_t t2, int16_t t3);
 double calculateTempSteinhartHart(double a, double b, double c, double resistance);
-//Steinhart-Hart
 
 //PID
 double filDiameterMm = 0.0;
@@ -322,7 +330,10 @@ void InitializeOther(void *param)
   // Take first value from ADC
   hotendTemp = FFF_Adc_readVolt(EXT_ADC_TEMP_CHANNEL);
 
-  calculateCoeffsSteinhartHart(...);
+  // calculateCoeffsSteinhartHart(); 
+  // steinhartCoeff_A = 1/T1_TEMP - 
+  // steinhartCoeff_B = 1/T2_TEMP - 
+  // steinhartCoeff_C = 1/T3_TEMP -
 
   /* Initialize Steppers */
   FFF_Stepper_init();
@@ -547,7 +558,7 @@ void handleADC(void *param)
 
       #if TEMPERATURE_CALC_METHOD==STEINHART_HART_METHOD
       // Use Steinhart-Hart
-      hotendTemp = calculateTempSteinhartHart(...);
+      // hotendTemp = calculateTempSteinhartHart(); 
       #else
       hotendTemp = LookupTemperature(adcRawRead, &thermistor0Lut, measuredRes);
       #endif
@@ -749,15 +760,15 @@ void calculateCoeffsSteinhartHart(FFF_Lut* lutPtr, double* aCoeffPtr, double* bC
 
     // T1Res, T2Res, T3Res are now available
     // Calculate coeffs
-    *aCoeffPtr = ...
-    *bCoeffPtr = ...
-    *cCoeffPtr = ...
+    // *aCoeffPtr = ...
+    // *bCoeffPtr = ...
+    // *cCoeffPtr = ...
 
   }
 }
 
 double calculateTempSteinhartHart(double a, double b, double c, double resistance)
 {
-
+  // > I
   return 0.0;
 }

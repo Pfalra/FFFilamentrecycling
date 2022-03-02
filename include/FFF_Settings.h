@@ -155,5 +155,6 @@
 #define DEBUG_LUT_HANDLING  FALSE
 #define DEBUG_OLED          FALSE
 #define DEBUG_ADC           FALSE
+#define DEBUG_STEPPER       TRUE
 
 #endif
