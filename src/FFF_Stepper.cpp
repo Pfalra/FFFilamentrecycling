@@ -20,7 +20,8 @@ FFF_Stepper extruderStepper =
   0,                  // id
   EXTRUDER_STEP_PIN,  // stepPin
   STEPPER_MICROSTEPS, // microsteps
-  &extruderPwm        // pwmPtr
+  &extruderPwm,       // pwmPtr
+  1.0
 };
 
 
@@ -39,7 +40,8 @@ FFF_Stepper pullStepper =
   1,                  // id
   PULLER_STEP_PIN,    // stepPin
   STEPPER_MICROSTEPS, // microsteps
-  &pullPwm            // pwmPtr
+  &pullPwm,           // pwmPtr
+  1                   // gearRatio
 };
 
 
@@ -58,7 +60,8 @@ FFF_Stepper winchStepper =
   2,                  // id
   WINCH_STEP_PIN,     // stepPin
   STEPPER_MICROSTEPS, // microsteps
-  &winchPwm           // pwmPtr
+  &winchPwm,          // pwmPtr
+  2.7143              // gearRatio
 };
 
 

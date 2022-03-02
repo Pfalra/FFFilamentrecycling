@@ -103,6 +103,7 @@ typedef struct FFF_Stepper_s
   uint8_t stepPin;
   uint8_t microsteps;
   FFF_PwmHandle* pwmPtr;
+  float gearRatio;
 } FFF_Stepper;
 
 
