@@ -335,6 +335,9 @@ void InitializeOther(void *param)
   // steinhartCoeff_B = 1/T2_TEMP - 
   // steinhartCoeff_C = 1/T3_TEMP -
 
+  // set outputlimits for PID
+
+
   /* Initialize Steppers */
   FFF_Stepper_init();
 
