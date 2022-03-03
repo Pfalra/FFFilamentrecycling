@@ -339,7 +339,8 @@ void InitializeOther(void *param)
   // steinhartCoeff_C = 1/T3_TEMP -
 
   // set outputlimits for PID
-  void SetOutputLimits(double, double); //default 0-250
+  pidMotControl.SetOutputLimits(0.0, 1000.0);
+  pidTempControl.SetOutputLimits(0.0, 100.0);
 
   /* Initialize Steppers */
   FFF_Stepper_init();
