@@ -13,6 +13,7 @@
 #define SERIAL_BAUDRATE 250000
 #define DELIMITER ";"
 #define FFF_DEVICE_SUPPLY 3.3
+#define SERIAL2_BAUDRATE 500000 //FPGA
 
 /*********************************************************/
 /* TEMPERATURE CALUCLATION METHODS */

@@ -140,6 +140,9 @@ void setup()
   appLog.name = "Application Log";
   appLog.isProtected = false;
   appLog.isActive = false;
+
+  // Serial 2
+   Serial2.begin(SERIAL2_BAUDRATE);
   
 #if DEBUG_LUT_HANDLING==TRUE
     
@@ -336,7 +339,7 @@ void InitializeOther(void *param)
   // steinhartCoeff_C = 1/T3_TEMP -
 
   // set outputlimits for PID
-
+  void SetOutputLimits(double, double); //default 0-250
 
   /* Initialize Steppers */
   FFF_Stepper_init();
@@ -531,6 +534,11 @@ void handleDiameterMotorPID(void *param)
   {
     pidMotControl.Compute();
     // Provide the values to the steppers 
+    
+    // send data only when you receive data:
+  //if (Serial2.available() > 0) {
+    // read the incoming byte (should be the FPGA input?):
+    //incomingByte = Serial2.read();
     FFF_Stepper_runStepsPerSecond(&pullStepper, pwmFrequency);
     vTaskDelay(PID_DIAMETER_INTERVAL_MS);
   }
