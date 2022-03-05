@@ -67,15 +67,15 @@ void FFF_Udp_init();
 double LookupTemperature(double volts, FFF_Lut* lutPtr, double measuredRes); 
 
 //Steinhart-Hart
-double steinhartCoeff_A;
-double steinhartCoeff_B;
-double steinhartCoeff_C;
+double steinhartCoeff_A = ALPHA_COEFF;
+double steinhartCoeff_B = BETA_COEFF;
+double steinhartCoeff_C = 0.0;
 
 // void getCoefficients(&thermistor0Lut, &steinhartCoeff_A, &steinhartCoeff_B, &steinhartCoeff_C); //
 
-void calculateCoeffsSteinhartHart(FFF_Lut* lutPtr, double* aCoeffPtr, double* bCoeffPtr, double* cCoeffPtr, int16_t t1, int16_t t2, int16_t t3);
-double calculateTempSteinhartHart(double a, double b, double c, double resistance);
+void calculateCoeffsSteinhartHart(FFF_Lut* lutPtr, double* aCoeffPtr, double* bCoeffPtr, int16_t t1, int16_t t2);
 
+double calculateTempSteinhartHart(double alpha, double beta, double c, double normTemp, double resistance, FFF_Lut* lutPtr);
 //PID
 double filDiameterMm = 0.0;
 double targetDiameterMm = TARGET_DIAMETER;
@@ -175,6 +175,8 @@ void setup()
 
 void loop()
 {
+  // Serial.print("App status: ");
+  // Serial.println(gAppStatus);
   if (stopApp)
   {
     // Disable Heater
@@ -252,7 +254,7 @@ void CreateAppTasks()
       "PID Motor Handler", // Name of the task (for debugging)
       8192,                // Stack size (bytes)
       NULL,                // Parameter to pass
-      3,                   // Task priority
+      PID_DIAMETER_TASK_PRIO,                   // Task priority
       &PIDDiameterTaskHandle);
 
   xTaskCreate(
@@ -260,7 +262,7 @@ void CreateAppTasks()
       "PID Temperature Handler", // Name of the task (for debugging)
       8192,                // Stack size (bytes)
       NULL,                // Parameter to pass
-      3,                   // Task priority
+      PID_TEMP_TASK_PRIO,                   // Task priority
       &PIDTemperatureTaskHandle);
 
   xTaskCreate(
@@ -268,7 +270,7 @@ void CreateAppTasks()
       "ADC Handler", // Name of the task (for debugging)
       16384,          // Stack size (bytes)
       NULL,          // Parameter to pass
-      3,             // Task priority
+      ADC_TASK_PRIO, // Task priority
       &ADCTaskHandle);
 
   // FPGA Readout missing
@@ -331,12 +333,7 @@ void InitializeOther(void *param)
   FFF_Adc_init();
 
   // Take first value from ADC
-  hotendTemp = FFF_Adc_readVolt(EXT_ADC_TEMP_CHANNEL);
-
-  // calculateCoeffsSteinhartHart(); 
-  // steinhartCoeff_A = 1/T1_TEMP - 
-  // steinhartCoeff_B = 1/T2_TEMP - 
-  // steinhartCoeff_C = 1/T3_TEMP -
+  double volts = FFF_Adc_readVolt(EXT_ADC_TEMP_CHANNEL);
 
   // set outputlimits for PID
   pidMotControl.SetOutputLimits(0.0, 1000.0);
@@ -533,13 +530,18 @@ void handleDiameterMotorPID(void *param)
 {
   while (1)
   {
-    pidMotControl.Compute();
+    // pidMotControl.Compute();
     // Provide the values to the steppers 
     
     // send data only when you receive data:
   //if (Serial2.available() > 0) {
     // read the incoming byte (should be the FPGA input?):
     //incomingByte = Serial2.read();
+
+    if (pwmFrequency <= 0.0)
+    {
+      pwmFrequency = 0.1;
+    }
     FFF_Stepper_runStepsPerSecond(&pullStepper, pwmFrequency);
     vTaskDelay(PID_DIAMETER_INTERVAL_MS);
   }
@@ -548,6 +550,10 @@ void handleDiameterMotorPID(void *param)
 
 void handleADC(void *param)
 {
+#if DEBUG_ADC == TRUE
+    Serial.println("Started ADC task");
+#endif  
+
   while (1)
   {
     double adcRawRead = 0.0;
@@ -570,7 +576,13 @@ void handleADC(void *param)
 
       #if TEMPERATURE_CALC_METHOD==STEINHART_HART_METHOD
       // Use Steinhart-Hart
-      // hotendTemp = calculateTempSteinhartHart(); 
+      Serial.println("Calculating Steinhart-Hart:");
+      hotendTemp = calculateTempSteinhartHart(steinhartCoeff_A, 
+                                              steinhartCoeff_B, 
+                                              steinhartCoeff_C, 
+                                              NORM_TEMP, 
+                                              measuredRes, 
+                                              &thermistor0Lut); 
       #else
       hotendTemp = LookupTemperature(adcRawRead, &thermistor0Lut, measuredRes);
       #endif
@@ -742,11 +754,41 @@ double LookupTemperature(double volts, FFF_Lut* lutPtr, double measuredRes)
 }
 
 
-// > Insert Steinhart Hart here
-void calculateCoeffsSteinhartHart(FFF_Lut* lutPtr, double* aCoeffPtr, double* bCoeffPtr, double* cCoeffPtr, int16_t t1, int16_t t2, int16_t t3)
+double FindResistance(int16_t temperature, FFF_Lut* lutPtr)
+{
+  uint16_t foundIndex = 0;
+
+  for (int i = 0; lutPtr->resPtr[i] > 0.0 && lutPtr->tempPtr[i] != END_TEMPS; i++)
+  {
+    if (temperature <= lutPtr->tempPtr[i])
+    {
+      Serial.print("Found Temp in LUT at pos ");
+      Serial.println(i);
+      return i;
+    }
+  }
+
+  return NULL;
+
+}
+
+
+void calculateCoeffsSteinhartHart(FFF_Lut* lutPtr, double* aCoeffPtr, double* bCoeffPtr, int16_t t1, int16_t t2)
 {
   const uint16_t maximumLutSize = 256; 
-  double t1Res, t2Res, t3Res;
+  int16_t temp1, temp2;
+  temp1 = t1 - 273.15;
+  temp2 = t2 - 273.15;
+
+Serial.println("Calculating coefficients for ");
+Serial.print("T1 = ");
+Serial.println(t1);
+Serial.print("T2 = ");
+Serial.println(t2);
+
+  double t1Res = 0.0;
+  double t2Res = 0.0;
+
   for (int i = 0; i < maximumLutSize && lutPtr->tempPtr[i] != NULL; i++)
   {
     uint16_t currTemp = lutPtr->tempPtr[i]; 
@@ -756,31 +798,68 @@ void calculateCoeffsSteinhartHart(FFF_Lut* lutPtr, double* aCoeffPtr, double* bC
     {
       t1Res = currRes;
       t1 = -1000; // invalidates t1 
-    }
-
-    if (currTemp >= t2 && t2 > -999)
+    } else if (currTemp >= t2 && t2 > -999)
     {
       t2Res = currRes;
       t2 = -1000; // invalidates t1 
     }
 
-    if (currTemp >= t3 && t3 > -999)
+    if (t1 == t2)
     {
-      t3Res = currRes;
-      t3 = -1000; // invalidates t1 
+      break;
     }
+  }
+
+    Serial.print("R1 = ");
+    Serial.println(t1Res);
+    Serial.print("R2 = ");
+    Serial.println(t2Res);
 
     // T1Res, T2Res, T3Res are now available
     // Calculate coeffs
-    // *aCoeffPtr = ...
-    // *bCoeffPtr = ...
-    // *cCoeffPtr = ...
-
-  }
+    *bCoeffPtr = 1/((1/(double) temp1 - 1/(double) temp2)*log(t1Res/t2Res));
+    *aCoeffPtr = ((t2Res - t1Res) / (double) (t1Res*(temp2-temp1))) * pow(10.0,-6.0);
 }
 
-double calculateTempSteinhartHart(double a, double b, double c, double resistance)
+
+double calculateTempSteinhartHart(double alpha, double beta, double c, double normTemp, double resistance, FFF_Lut* lutPtr)
 {
-  // > I
-  return 0.0;
+  Serial.println("--------- SH ---------");
+  Serial.print("Coefficients alpha, beta, c: ");
+  Serial.println(alpha, 5);
+  Serial.println(beta, 5);
+  Serial.println(c, 5);
+
+  double normRes = 0.0;
+#ifdef NORM_RES
+  if (NORM_RES <= 0.0)
+  {
+    uint16_t index = FindResistance(NORM_TEMP, lutPtr);
+    normRes = lutPtr->scalingFac * lutPtr->tempPtr[index];
+  } 
+  else 
+  {
+    normRes = NORM_RES;
+  }
+#else 
+  // We will serach for the norm resistance everytime this function gets called and itÄs alway the same
+  uint16_t index = FindResistance(NORM_TEMP, lutPtr);
+  normRes = lutPtr->scalingFac * lutPtr->tempPtr[index];
+#endif
+
+  // We convert to Kelvin
+  normTemp += 273.15;
+  double subTerm = log(normRes/resistance);
+  double dividend = (normTemp * beta) / (subTerm);
+  double divisor = (beta / subTerm) - normTemp;
+  double quotient = dividend/divisor;
+  double outputTemp = quotient - 273.15; // Convert back
+
+  Serial.print("Subterm: ");
+  Serial.println(subTerm, 5);
+  Serial.print("Dividend: ");
+  Serial.println(dividend, 5);
+  Serial.print("Divisor: ");
+  Serial.println(divisor, 5);
+  return outputTemp;
 }

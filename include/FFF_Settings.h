@@ -41,12 +41,21 @@
 /*********************************************************/
 #define PWM_HEATER_FREQUENCY    2500
 
+
+
+/*********************************************************/
+/* TEMPERATURE COEFFICIENTS  */
 /*********************************************************/
 #define TEMPERATURE_CALC_METHOD STEINHART_HART_METHOD
-#define T1_TEMP 0
-#define T2_TEMP 100
-#define T3_TEMP 220
+#define NORM_TEMP   25.0
+#define NORM_RES    100000.0
 
+// The following coefficients were calculated with the NTC 
+// calculator at 
+#define ALPHA_COEFF -0.0559
+#define BETA_COEFF 3950
+
+/*********************************************************/
 /* ANALYZER */
 /*********************************************************/
 #define MEANFILTER_ACTIVE       TRUE
@@ -148,14 +157,15 @@
 #define UDP_TASK_PRIO           3
 #define FPGA_CALC_TASK_PRIO     4
 #define PID_DIAMETER_TASK_PRIO  5
+#define ADC_TASK_PRIO           5
 
 
 /*********************************************************/
 /* DEBUG SWITCHES */
 /*********************************************************/
-#define DEBUG_LUT_HANDLING  FALSE
+#define DEBUG_LUT_HANDLING  TRUE
 #define DEBUG_OLED          FALSE
-#define DEBUG_ADC           FALSE
+#define DEBUG_ADC           TRUE
 #define DEBUG_STEPPER       TRUE
 
 #endif
