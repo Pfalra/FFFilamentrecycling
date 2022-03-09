@@ -65,7 +65,7 @@ extern const uint8_t myFFFLogo[];
 void FFF_Oled_init()
 {
     Serial.println("Starting OLED");
-    if(!oled.begin(SSD1306_SWITCHCAPVCC, OLED_ADDR)) {
+    while(!oled.begin(SSD1306_SWITCHCAPVCC, OLED_ADDR)) {
         Serial.println(F("SSD1306 allocation failed"));
     }
 

@@ -47,7 +47,6 @@ void handleFPGA(void *param);
 
 
 /* TASK HANDLES */
-//TaskHandles
 TaskHandle_t initWiFiHandle;
 TaskHandle_t initSDHandle;
 TaskHandle_t initOtherHandle;
@@ -60,6 +59,8 @@ TaskHandle_t ADCTaskHandle;
 TaskHandle_t StepperTaskHandle;
 TaskHandle_t FPGATaskHandle;
 
+/* Sempahore Handles */
+SemaphoreHandle_t i2CSemaphoreHandle;
 
 // Prototypes
 void FFF_Udp_init();
@@ -127,7 +128,7 @@ uint32_t logCount = 0;
 
 
 void setup()
-{
+{  
   /* Start Serial communication */
   Serial.begin(SERIAL_BAUDRATE);
   Serial.println();
@@ -163,20 +164,18 @@ void setup()
 
   /* Initialize OLED */
   FFF_Oled_init();
-  vTaskDelay(500);
+  // vTaskDelay(500);
 
   /* Create tasks for initialization */
   CreateAppInitTasks();
 
   /* Create Tasks for application */
-  CreateAppTasks();
+  // CreateAppTasks();
 }
 
 
 void loop()
 {
-  // Serial.print("App status: ");
-  // Serial.println(gAppStatus);
   if (stopApp)
   {
     // Disable Heater
@@ -276,6 +275,7 @@ void CreateAppTasks()
   // FPGA Readout missing
 }
 
+
 void CreateAppInitTasks()
 {
   /* Create tasks for further initializations */
@@ -295,21 +295,14 @@ void CreateAppInitTasks()
       2,                  // Task priority
       &initOtherHandle);
 
-  xTaskCreate(
-      InitializeSD,    // Function that should be called
-      "Initialize SD", // Name of the task (for debugging)
-      16384,            // Stack size (bytes)
-      NULL,            // Parameter to pass
-      2,               // Task priority
-      &initSDHandle);
-
-  xTaskCreate(
-      handleUdp,     // Function that should be called
-      "UDP Handler", // Name of the task (for debugging)
-      16384,          // Stack size (bytes)
-      NULL,          // Parameter to pass
-      UDP_TASK_PRIO, // Task priority
-      &UdpTaskHandle);
+  /* ESP and SD don't like each other somehow. So deactivate it for now. */
+  // xTaskCreate(
+  //     InitializeSD,    // Function that should be called
+  //     "Initialize SD", // Name of the task (for debugging)
+  //     16384,            // Stack size (bytes)
+  //     NULL,            // Parameter to pass
+  //     2,               // Task priority
+  //     &initSDHandle);
 }
 
 /******************************************/
@@ -321,6 +314,17 @@ void InitializeWiFi(void *param)
   Serial.println("I>Starting WiFi.");
   FFF_initializeWiFi(MY_SSID, MY_PWD);
   Serial.println("I>WiFi init done");
+
+  FFF_Udp_init();
+
+  xTaskCreate(
+    handleUdp,     // Function that should be called
+    "UDP Handler", // Name of the task (for debugging)
+    16384,          // Stack size (bytes)
+    NULL,          // Parameter to pass
+    UDP_TASK_PRIO, // Task priority
+    &UdpTaskHandle);
+
   /* Make task only execute once */
   vTaskDelete(initWiFiHandle);
 }
@@ -332,18 +336,12 @@ void InitializeOther(void *param)
   /* Initialize ADC */
   FFF_Adc_init();
 
-  // Take first value from ADC
-  double volts = FFF_Adc_readVolt(EXT_ADC_TEMP_CHANNEL);
-
   // set outputlimits for PID
   pidMotControl.SetOutputLimits(0.0, 1000.0);
   pidTempControl.SetOutputLimits(0.0, 100.0);
 
   /* Initialize Steppers */
   FFF_Stepper_init();
-
-  /* Initialize UDP */
-  FFF_Udp_init();
 
   Serial.println("\r\nI>Init done");
   vTaskDelete(initOtherHandle);
@@ -376,6 +374,9 @@ void handleUdp(void *param)
     if (packetSize)
     {
       int len = udpConn.read(udpRecPBuf, UDP_PBUF_SIZE);
+
+      String udpStr = String(udpRecPBuf);
+
       if (len > 0)
       {
         udpRecPBuf[len] = 0;
@@ -384,25 +385,25 @@ void handleUdp(void *param)
       Serial.println("Received:");
       Serial.println(udpRecPBuf);
 
-      if (strncmp(udpRecPBuf, UDP_APP_START_CMD, sizeof(UDP_APP_START_CMD)) == 0)
+      if (udpStr == UDP_APP_START_CMD)
       {
         startApp = TRUE;
         udpConn.println(UDP_CONFIRM);
         udpConn.println(UDP_START_CONFIRM);
       } 
-      else if (strncmp(udpRecPBuf, UDP_APP_STOP_CMD, sizeof(UDP_APP_STOP_CMD)) == 0)
+      else if (udpStr == UDP_APP_STOP_CMD)
       {
         stopApp = TRUE;
         udpConn.println(UDP_CONFIRM);
         udpConn.println(UDP_STOP_CONFIRM);
       } 
-      else if (strncmp(udpRecPBuf, UDP_APP_PAUSE_CMD, sizeof(UDP_APP_PAUSE_CMD)) == 0)
+      else if (udpStr == UDP_APP_PAUSE_CMD)
       {
         pauseApp = TRUE;
         udpConn.println(UDP_CONFIRM);
         udpConn.println(UDP_PAUSE_CONFIRM);
       } 
-      else if (strncmp(udpRecPBuf, UDP_APP_LIST_CMD, sizeof(UDP_APP_LIST_CMD)) == 0)
+      else if (udpStr == UDP_APP_LIST_CMD)
       {
         udpConn.println(UDP_CONFIRM);
         char fileStr[MAX_OUT_STRING_LEN];
@@ -413,6 +414,11 @@ void handleUdp(void *param)
         Serial.println(fileStr);
         udpConn.println(heading);
         udpConn.println(fileStr);
+
+      } 
+      else if (udpStr == UDP_SET_EXTRUDER_SPEED_CMD)
+      {
+        
 
       } 
       else 
@@ -560,6 +566,7 @@ void handleADC(void *param)
     volatile double oldTemp;
     if (FFF_Adc_isReady())
     {
+
       adcRawRead = FFF_Adc_readVolt(EXT_ADC_TEMP_CHANNEL);
       // Traverse the lut and search for the point that comes nearest
       double voltDiff = FFF_DEVICE_SUPPLY - adcRawRead;
@@ -615,8 +622,6 @@ void handleADC(void *param)
       oldTemp = hotendTemp;
     }
 
-    FFF_Oled_updateTemperature(hotendTemp); 
-    
     vTaskDelay(ADC_SAMPLE_INTERVAL_MS);
   }
 }
@@ -639,7 +644,6 @@ void FFF_Udp_init()
   /* Maybe use AsyncUdp in the future */
   udpConn.begin(UDP_PORT);
 }
-
 
 
 /* TODO: Implement something better like Steinhart-Hart method */
