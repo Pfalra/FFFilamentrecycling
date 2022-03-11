@@ -90,7 +90,7 @@ PID pidMotControl(&filDiameterMm, &pwmFrequency, &targetDiameterMm, kp_mot, ki_m
 
 // Heater
 double hotendTemp = 0.0;
-double pwmDutyCycle = 0.0;
+double pwmDutyCycle = 20.0;
 double targetTemp = 215.0;
 
 double kp_temp = 24.4;
@@ -192,6 +192,8 @@ void loop()
   {
     FFF_Heater_heat(pwmDutyCycle);
     FFF_Stepper_enableAll();
+    FFF_Stepper_runStepsPerSecond(&extruderStepper, EXTRUDE_RATE_STEPS_PS);
+
     if (gAppStatus == APP_STOPPED)
     {
       CreateAppTasks();
@@ -229,7 +231,7 @@ void DeleteAppTasks()
 {
   vTaskDelete(PIDDiameterTaskHandle);
   vTaskDelete(PIDTemperatureTaskHandle);
-  vTaskDelete(ADCTaskHandle);
+  // vTaskDelete(ADCTaskHandle);
 }
 
 void SuspendAppTasks()
@@ -263,15 +265,6 @@ void CreateAppTasks()
       NULL,                // Parameter to pass
       PID_TEMP_TASK_PRIO,                   // Task priority
       &PIDTemperatureTaskHandle);
-
-  xTaskCreate(
-      handleADC,     // Function that should be called
-      "ADC Handler", // Name of the task (for debugging)
-      16384,          // Stack size (bytes)
-      NULL,          // Parameter to pass
-      ADC_TASK_PRIO, // Task priority
-      &ADCTaskHandle);
-
   // FPGA Readout missing
 }
 
@@ -344,6 +337,15 @@ void InitializeOther(void *param)
   FFF_Stepper_init();
 
   Serial.println("\r\nI>Init done");
+
+  xTaskCreate(
+    handleADC,     // Function that should be called
+    "ADC Handler", // Name of the task (for debugging)
+    16384,          // Stack size (bytes)
+    NULL,          // Parameter to pass
+    ADC_TASK_PRIO, // Task priority
+    &ADCTaskHandle);
+
   vTaskDelete(initOtherHandle);
 }
 
@@ -508,7 +510,7 @@ void handleLog(void *param)
       // App should be stopped so stop logging
       if (logPtr->isActive)
       {
-        Serial.println("I>Detaching file");
+        // Serial.println("I>Detaching file");
         // FFF_SD_detachLogFile(logPtr);
       }
 
@@ -546,9 +548,10 @@ void handleDiameterMotorPID(void *param)
 
     if (pwmFrequency <= 0.0)
     {
-      pwmFrequency = 0.1;
+      pwmFrequency = 50;
     }
     FFF_Stepper_runStepsPerSecond(&pullStepper, pwmFrequency);
+    FFF_Stepper_runStepsPerSecond(&winchStepper, pwmFrequency);
     vTaskDelay(PID_DIAMETER_INTERVAL_MS);
   }
 }
@@ -583,7 +586,7 @@ void handleADC(void *param)
 
       #if TEMPERATURE_CALC_METHOD==STEINHART_HART_METHOD
       // Use Steinhart-Hart
-      Serial.println("Calculating Steinhart-Hart:");
+      // Serial.println("Calculating Steinhart-Hart:");
       hotendTemp = calculateTempSteinhartHart(steinhartCoeff_A, 
                                               steinhartCoeff_B, 
                                               steinhartCoeff_C, 
@@ -593,6 +596,10 @@ void handleADC(void *param)
       #else
       hotendTemp = LookupTemperature(adcRawRead, &thermistor0Lut, measuredRes);
       #endif
+
+      FFF_Oled_updateTemperature(hotendTemp);
+      FFF_Oled_updatePullMotSpeed(pwmFrequency);
+      FFF_Oled_updateExtruderMotSpeed(EXTRUDE_RATE_STEPS_PS);
 
     }
 
@@ -622,6 +629,7 @@ void handleADC(void *param)
       oldTemp = hotendTemp;
     }
 
+
     vTaskDelay(ADC_SAMPLE_INTERVAL_MS);
   }
 }
@@ -646,7 +654,10 @@ void FFF_Udp_init()
 }
 
 
-/* TODO: Implement something better like Steinhart-Hart method */
+
+/******************************************/
+/* TEMPERATURE CALCULATION */
+/******************************************/
 double LookupTemperature(double volts, FFF_Lut* lutPtr, double measuredRes)
 {
   double scaling = lutPtr->scalingFac;
@@ -828,11 +839,11 @@ Serial.println(t2);
 
 double calculateTempSteinhartHart(double alpha, double beta, double c, double normTemp, double resistance, FFF_Lut* lutPtr)
 {
-  Serial.println("--------- SH ---------");
-  Serial.print("Coefficients alpha, beta, c: ");
-  Serial.println(alpha, 5);
-  Serial.println(beta, 5);
-  Serial.println(c, 5);
+  // Serial.println("--------- SH ---------");
+  // Serial.print("Coefficients alpha, beta, c: ");
+  // Serial.println(alpha, 5);
+  // Serial.println(beta, 5);
+  // Serial.println(c, 5);
 
   double normRes = 0.0;
 #ifdef NORM_RES
@@ -859,11 +870,11 @@ double calculateTempSteinhartHart(double alpha, double beta, double c, double no
   double quotient = dividend/divisor;
   double outputTemp = quotient - 273.15; // Convert back
 
-  Serial.print("Subterm: ");
-  Serial.println(subTerm, 5);
-  Serial.print("Dividend: ");
-  Serial.println(dividend, 5);
-  Serial.print("Divisor: ");
-  Serial.println(divisor, 5);
+  // Serial.print("Subterm: ");
+  // Serial.println(subTerm, 5);
+  // Serial.print("Dividend: ");
+  // Serial.println(dividend, 5);
+  // Serial.print("Divisor: ");
+  // Serial.println(divisor, 5);
   return outputTemp;
 }
