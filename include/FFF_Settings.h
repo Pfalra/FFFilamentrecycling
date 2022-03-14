@@ -166,9 +166,9 @@
 /*********************************************************/
 /* DEBUG SWITCHES */
 /*********************************************************/
-#define DEBUG_LUT_HANDLING  TRUE
+#define DEBUG_LUT_HANDLING  FALSE
 #define DEBUG_OLED          FALSE
-#define DEBUG_ADC           TRUE
-#define DEBUG_STEPPER       TRUE
+#define DEBUG_ADC           FALSE
+#define DEBUG_STEPPER       FALSE
 
 #endif

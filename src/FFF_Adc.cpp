@@ -25,7 +25,7 @@ void FFF_Adc_init()
     // }
     ExtADC.setWireClock(1000000);
     Serial.println();
-    ExtADC.setGain(0);
+    ExtADC.setGain(10);
 
     // Check connection
     bool conn = false;
