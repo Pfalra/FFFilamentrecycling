@@ -61,6 +61,11 @@
 #define MEANFILTER_ACTIVE       TRUE
 #define MEANFILTER_WEIGHT_COEFF 10
 #define DIAMETER_SCALING_COEFF  100
+#define MEASUREMENT_LENGTH      2048
+#define FIRST_DEAD_PIX          128
+#define LAST_DEAD_PIX           60
+#define SYNC_LENGTH             4
+#define DIA_MEAS_HYST           32
 
 /*********************************************************/
 /* OLED */
@@ -125,8 +130,8 @@
 #define STEPPER_MICROSTEPS  16
 
 #define HEATER_OUTPUT_PIN   33
-#define TX_TO_FPGA_PIN      16
-#define RX_TO_FPGA_PIN      17
+#define RX_TO_FPGA_PIN      16
+#define TX_TO_FPGA_PIN      17
 #define OLED_SCL_PIN        22
 #define OLED_SDA_PIN        21
 #define STEPPER_EN_PIN      27

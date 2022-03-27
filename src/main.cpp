@@ -6,6 +6,7 @@
 #include <PID_v1.h>
 #include <WiFiUDP.h>
 #include <math.h>
+#include <driver/uart.h>
 
 /* FFF includes */
 #include <FFF_Types.h>
@@ -61,6 +62,33 @@ TaskHandle_t FPGATaskHandle;
 
 /* Sempahore Handles */
 SemaphoreHandle_t i2CSemaphoreHandle;
+
+static QueueHandle_t uart2_queue;
+volatile bool uart2_rx_complete;
+
+uint8_t diaMeasPoints[MEASUREMENT_LENGTH];
+
+FFF_Measurement diameterMeasurement = {
+  .outputVal = 0.0,
+  .scalingCoeff = DIAMETER_SCALING_COEFF,
+  .mean = 0,
+  .len = MEASUREMENT_LENGTH,
+  .startIndex = SYNC_LENGTH + FIRST_DEAD_PIX,
+  .endIndex = MEASUREMENT_LENGTH - LAST_DEAD_PIX,
+  .maxIndex = 0,
+  .minIndex = 0,
+  .firstLimPass = 0,
+  .lastLimPass = 0,
+  .passHyst = DIA_MEAS_HYST,
+  .passWidth = 0,
+  .maxVal = 0,
+  .minVal = 0,
+  .analyzed = false,
+  .protectFlag = false,
+  .dataPoints = diaMeasPoints
+};
+
+
 
 // Prototypes
 void FFF_Udp_init();
@@ -127,6 +155,23 @@ uint8_t countApp = 0;
 uint32_t logCount = 0;
 
 
+static void IRAM_ATTR uart2_isr_handler(void *arg)
+{
+  uint16_t rx_fifo_len, status;
+  uint16_t index = 0;
+
+  status = UART2.int_st.val;
+  rx_fifo_len = UART2.status.rxfifo_cnt;
+  uart2_rx_complete = false;
+
+  while(rx_fifo_len)
+  {
+    
+  }
+}
+
+
+
 void setup()
 {  
   /* Start Serial communication */
@@ -143,7 +188,20 @@ void setup()
   appLog.isActive = false;
 
   // Serial 2
-   Serial2.begin(SERIAL2_BAUDRATE);
+  uart_config_t uart2_config = 
+  {
+    .baud_rate = 500000,
+    .data_bits = UART_DATA_8_BITS,
+    .parity = UART_PARITY_DISABLE,
+    .stop_bits = UART_STOP_BITS_1,
+    .flow_ctrl = UART_HW_FLOWCTRL_DISABLE
+  }; 
+
+
+   uart_param_config(UART_NUM_2, &uart2_config);
+
+   uart_set_pin(UART_NUM_2, TX_TO_FPGA_PIN, RX_TO_FPGA_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+   uart_driver_install(UART_NUM_2, MEASUREMENT_LENGTH, 0, 8, &uart2_queue, 0);
   
 #if DEBUG_LUT_HANDLING==TRUE
     
@@ -409,7 +467,7 @@ void handleUdp(void *param)
       {
         udpConn.println(UDP_CONFIRM);
         char fileStr[MAX_OUT_STRING_LEN];
-        FFF_SD_getFileList(fileStr, MAX_OUT_STRING_LEN);
+        // FFF_SD_getFileList(fileStr, MAX_OUT_STRING_LEN);
 
         const char heading[] = "--- FILE LIST ----";
         Serial.println(heading);
