@@ -3,10 +3,40 @@
 #include <WiFi.h>
 #include <WiFiServer.h>
 #include <FFF_Types.h>
+#include <FFF_Settings.h>
+#include <FFF_Credentials.h>
+#include <FFF_Rtos.h>
+
 
 // Prototypes 
 void FFF_onWiFiEvent(WiFiEvent_t event);
 
+//UDP
+WiFiUDP udpConn;
+char udpRecPBuf[UDP_PBUF_SIZE];
+char udpSndPBuf[UDP_PBUF_SIZE];
+
+
+void TASK_InitializeWiFi(void *param)
+{
+  /* Start WiFi */
+  Serial.println("I>Starting WiFi.");
+  FFF_initializeWiFi(MY_SSID, MY_PWD);
+  Serial.println("I>WiFi init done");
+
+  FFF_Udp_init();
+
+  xTaskCreate(
+    handleUdp,     // Function that should be called
+    "UDP Handler", // Name of the task (for debugging)
+    16384,          // Stack size (bytes)
+    NULL,          // Parameter to pass
+    UDP_TASK_PRIO, // Task priority
+    &UdpTaskHandle);
+
+  /* Make task only execute once */
+  vTaskDelete(initWiFiHandle);
+}
 
 
 void FFF_initializeWiFi(const char* ssid, const char* pwd)
@@ -27,7 +57,6 @@ void FFF_initializeWiFi(const char* ssid, const char* pwd)
 }
 
 
-
 FFF_ModStatus FFF_getWiFiStatus()
 {
     /* Check if the modem is in sleep mode */
@@ -45,6 +74,7 @@ FFF_ModStatus FFF_getWiFiStatus()
     return MOD_FUNCTIONAL;
 }
 
+
 bool FFF_reconnectWiFi()
 {
     if (WiFi.status() != WL_CONNECTED)
@@ -53,6 +83,7 @@ bool FFF_reconnectWiFi()
     }
     return true;
 }
+
 
 void FFF_reportWiFiEvent()
 {
@@ -77,5 +108,89 @@ void FFF_onWiFiEvent(WiFiEvent_t event)
       Serial.println("Station disconnected from ESP32 soft AP");
       break;
     default: break;
+  }
+}
+
+
+/******************************************/
+/* UDP */
+/******************************************/
+void FFF_Udp_init()
+{
+  /* Maybe use AsyncUdp in the future */
+  udpConn.begin(UDP_PORT);
+}
+
+
+void handleUdp(void *param)
+{
+  Serial.println("Reading UDP packets...");
+  while (1)
+  {
+    int packetSize = udpConn.parsePacket();
+
+    if (packetSize)
+    {
+      int len = udpConn.read(udpRecPBuf, UDP_PBUF_SIZE);
+
+      String udpStr = String(udpRecPBuf);
+
+      if (len > 0)
+      {
+        udpRecPBuf[len] = 0;
+      }
+
+      Serial.println("Received:");
+      Serial.println(udpRecPBuf);
+
+      if (udpStr == UDP_APP_START_CMD)
+      {
+        FFF_Rtos_startApp();
+        udpConn.println(UDP_CONFIRM);
+        udpConn.println(UDP_START_CONFIRM);
+      } 
+      else if (udpStr == UDP_APP_STOP_CMD)
+      {
+        FFF_Rtos_stopApp();
+        udpConn.println(UDP_CONFIRM);
+        udpConn.println(UDP_STOP_CONFIRM);
+      } 
+      else if (udpStr == UDP_APP_PAUSE_CMD)
+      {
+        FFF_Rtos_pauseApp();
+        udpConn.println(UDP_CONFIRM);
+        udpConn.println(UDP_PAUSE_CONFIRM);
+      } 
+      else if (udpStr == UDP_APP_LIST_CMD)
+      {
+        udpConn.println(UDP_CONFIRM);
+        char fileStr[MAX_OUT_STRING_LEN];
+        // FFF_SD_getFileList(fileStr, MAX_OUT_STRING_LEN);
+
+        const char heading[] = "--- FILE LIST ----";
+        Serial.println(heading);
+        Serial.println(fileStr);
+        udpConn.println(heading);
+        udpConn.println(fileStr);
+
+      } 
+      else if (udpStr == UDP_SET_EXTRUDER_SPEED_CMD)
+      {
+        
+
+      } 
+      else 
+      {
+        Serial.println("I>Unknown command");
+
+      }
+
+      // Confirm reception
+      udpConn.beginPacket(udpConn.remoteIP(), udpConn.remotePort());
+      udpConn.println(UDP_CONFIRM);
+      udpConn.endPacket();
+    }
+
+    vTaskDelay(UDP_HANDLE_INTERVAL_MS);
   }
 }

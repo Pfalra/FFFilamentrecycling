@@ -7,7 +7,7 @@
 #include <FFF_Types.h>
 #include <FFF_Settings.h>
 
-bool FFF_SDReader_connected = false;
+bool reader_connected = false;
 
 SPIClass sdSpi(HSPI);
 
@@ -30,7 +30,7 @@ bool FFF_SD_Init(FFF_Sdmode mode)
       }
     }
 
-    FFF_SDReader_connected = true;
+    reader_connected = true;
 
     uint8_t cardType = SD.cardType();
 
@@ -83,7 +83,7 @@ FFF_ModStatus FFF_getSDStatus()
     return MOD_FAULT;
   }
 
-  if (!FFF_SDReader_connected)
+  if (!reader_connected)
   {
     return MOD_HW_NOT_DETECTED;
   }
@@ -119,7 +119,6 @@ void FFF_SD_openLogFile(String fileName, File* fptr)
     return;
   }
 }
-
 
 
 bool FFF_SD_writeToFile(File* fptr, char line[])
@@ -275,3 +274,8 @@ void FFF_SD_detachLogFile(FFF_Log* logPtr)
   logPtr->logFilePtr = NULL;
 }
 
+
+bool FFF_SD_isReaderConnected()
+{
+  return reader_connected;
+} 

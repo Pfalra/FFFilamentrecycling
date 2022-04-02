@@ -199,3 +199,13 @@ void FFF_DiaAn_analyze(FFF_Measurement *meas)
 
     return;
 }
+
+
+void handleFPGA(void *param)
+{
+  while (1)
+  {
+    // Read from Serial2 and analyze the stream
+    vTaskDelay(FPGA_CALCULATE_DIAMETER_INTERVAL_MS);
+  }
+}

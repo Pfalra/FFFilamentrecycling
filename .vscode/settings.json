@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "fff_temperature.h": "c",
+        "fff_rtos.h": "c",
+        "arduino.h": "c"
+    }
+}
