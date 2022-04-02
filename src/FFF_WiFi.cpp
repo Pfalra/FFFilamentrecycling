@@ -31,7 +31,7 @@ void TASK_InitializeWiFi(void *param)
   FFF_Udp_init();
 
   xTaskCreate(
-    handleUdp,     // Function that should be called
+    TASK_handleUdp,     // Function that should be called
     "UDP Handler", // Name of the task (for debugging)
     16384,          // Stack size (bytes)
     NULL,          // Parameter to pass
@@ -126,7 +126,7 @@ void FFF_Udp_init()
 }
 
 
-void handleUdp(void *param)
+void TASK_handleUdp(void *param)
 {
   Serial.println("Reading UDP packets...");
   while (1)

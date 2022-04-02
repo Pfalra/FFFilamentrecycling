@@ -20,5 +20,6 @@ void FFF_reportWiFiEvent();
 /* UDP */
 /******************************************/
 void FFF_Udp_init();
+void TASK_handleUdp(void *param);
 
 #endif

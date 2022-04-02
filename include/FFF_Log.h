@@ -4,5 +4,6 @@
 #include <Arduino.h>
 
 TaskHandle_t* FFF_Log_getTaskHandle();
+void TASK_handleLog(void *param);
 
 #endif

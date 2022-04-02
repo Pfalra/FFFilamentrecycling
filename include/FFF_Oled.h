@@ -17,5 +17,6 @@ void FFF_Oled_clearDisplay();
 Adafruit_SSD1306* FFF_Oled_getOLED();
 
 TaskHandle_t* FFF_Oled_getTaskHandle();
+void TASK_handleOled(void *param);
 
 #endif

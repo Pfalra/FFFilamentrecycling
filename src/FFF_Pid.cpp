@@ -41,7 +41,7 @@ void FFF_Pid_init()
   pidTempControl.SetOutputLimits(0.0, 100.0);
 }
 
-void handleDiameterMotorPID(void *param)
+void TASK_handleDiameterMotorPID(void *param)
 {
   while (1)
   {
@@ -64,7 +64,7 @@ void handleDiameterMotorPID(void *param)
 }
 
 
-void handleTempPID(void *param)
+void TASK_handleTempPID(void *param)
 {
   while (1)
   {

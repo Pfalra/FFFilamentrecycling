@@ -42,7 +42,7 @@ void SuspendAppTasks()
 void CreateAppTasks()
 {
   xTaskCreate(
-      handleDiameterMotorPID,      // Function that should be called
+      TASK_handleDiameterMotorPID,      // Function that should be called
       "TASK: PID Motor Handler", // Name of the task (for debugging)
       8192,                // Stack size (bytes)
       NULL,                // Parameter to pass
@@ -50,7 +50,7 @@ void CreateAppTasks()
       FFF_Pid_getDiameterTaskHandle());
 
   xTaskCreate(
-      handleTempPID,       // Function that should be called
+      TASK_handleTempPID,       // Function that should be called
       "TASK: PID Temperature Handler", // Name of the task (for debugging)
       8192,                // Stack size (bytes)
       NULL,                // Parameter to pass

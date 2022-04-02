@@ -9,4 +9,5 @@ void calculateCoeffsSteinhartHart(FFF_Lut* lutPtr, double* aCoeffPtr, double* bC
 double calculateTempSteinhartHart(double alpha, double beta, double c, double normTemp, double resistance, FFF_Lut* lutPtr);
 double FFF_Temp_getTemperature();
 TaskHandle_t* FFF_Temp_getTaskHandle();
+void TASK_handleTemperature(void *param);
 #endif

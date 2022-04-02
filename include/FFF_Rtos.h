@@ -15,16 +15,6 @@ void TASK_InitializeWiFi(void *param);
 void InitializeOther(void *param);
 void InitializeSD(void *param);
 
-
-//HandlerFunctions
-void handleUdp(void *param);
-void handleOled(void *param);
-void handleLog(void *param);
-void handleDiameterMotorPID(void *param);
-void handleTempPID(void *param);
-void TASK_handleTemperature(void *param);
-void TASK_handleFpgaRead(void *param);
-
 void handleMainLoop();
 
 
