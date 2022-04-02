@@ -15,7 +15,7 @@ void TASK_InitializeWiFi(void *param);
 void InitializeOther(void *param);
 void InitializeSD(void *param);
 
-void handleMainLoop();
+void TASK_mainControlApp();
 
 
 void FFF_Rtos_startApp();

@@ -93,7 +93,7 @@ void FFF_Rtos_StartOS()
 }
 
 
-void handleMainLoop()
+void TASK_mainControlApp()
 {
   if (stopApp)
   {

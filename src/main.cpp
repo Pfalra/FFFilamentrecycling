@@ -59,5 +59,5 @@ void setup()
 
 void loop()
 {
-  handleMainLoop();
+  TASK_mainControlApp();
 }
