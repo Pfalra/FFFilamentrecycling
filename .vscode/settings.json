@@ -2,6 +2,7 @@
     "files.associations": {
         "fff_temperature.h": "c",
         "fff_rtos.h": "c",
-        "arduino.h": "c"
+        "arduino.h": "c",
+        "fff_types.h": "c"
     }
 }

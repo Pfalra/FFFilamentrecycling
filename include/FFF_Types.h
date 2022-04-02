@@ -80,8 +80,8 @@ typedef struct FFF_Measurement_s
 
 typedef struct FFF_Lut_s
 {
-    int* tempPtr;
-    float* resPtr; 
+    const int* tempPtr;
+    const float* resPtr; 
     float scalingFac;
     float volts[100];
 } FFF_Lut;

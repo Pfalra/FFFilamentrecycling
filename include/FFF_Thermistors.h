@@ -38,3 +38,4 @@
 
 
 void FFF_Therm_printLut();
+FFF_Lut* FFF_Therm_getLut();

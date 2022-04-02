@@ -88,6 +88,8 @@ void CreateAppInitTasks()
 }
 
 
+
+
 void FFF_Rtos_StartOS()
 {
   CreateAppInitTasks();
@@ -96,7 +98,7 @@ void FFF_Rtos_StartOS()
 
 void handleMainLoop()
 {
-    if (stopApp)
+  if (stopApp)
   {
     // Disable Heater
     FFF_Heater_stop();
@@ -110,10 +112,6 @@ void handleMainLoop()
 
   if (startApp)
   {
-    FFF_Heater_heat(pwmDutyCycle);
-    FFF_Stepper_enableAll();
-    FFF_Stepper_runStepsPerSecond(&extruderStepper, EXTRUDE_RATE_STEPS_PS);
-
     if (gAppStatus == APP_STOPPED)
     {
       CreateAppTasks();

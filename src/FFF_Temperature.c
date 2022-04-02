@@ -1,18 +1,19 @@
 #include <FFF_Types.h>
 #include <FFF_Thermistors.h>
 #include <FFF_Temperature.h>
+#include <FFF_Adc.h>
 #include <Arduino.h>
+
+
+/******************************************/
+/* GLOBAL TEMPERATURES  */
+/******************************************/
+double hotendTemperature = 0.0;
+
 
 /******************************************/
 /* TEMPERATURE CALCULATION */
 /******************************************/
-
-//Steinhart-Hart
-double steinhartCoeff_A = ALPHA_COEFF;
-double steinhartCoeff_B = BETA_COEFF;
-double steinhartCoeff_C = 0.0;
-
-
 double LookupTemperature(double volts, FFF_Lut* lutPtr, double measuredRes)
 {
   double scaling = lutPtr->scalingFac;
@@ -126,8 +127,6 @@ double LookupTemperature(double volts, FFF_Lut* lutPtr, double measuredRes)
 
 double FindResistance(int16_t temperature, FFF_Lut* lutPtr)
 {
-  uint16_t foundIndex = 0;
-
   for (int i = 0; lutPtr->resPtr[i] > 0.0 && lutPtr->tempPtr[i] != END_TEMPS; i++)
   {
     if (temperature <= lutPtr->tempPtr[i])
@@ -248,6 +247,7 @@ void TASK_handleTemperature(void *param)
     volatile double oldTemp;
     if (FFF_Adc_isReady())
     {
+      FFF_Lut* lutPtr = FFF_Therm_getLut();
 
       adcRawRead = FFF_Adc_readVolt(EXT_ADC_TEMP_CHANNEL);
       // Traverse the lut and search for the point that comes nearest
@@ -266,23 +266,23 @@ void TASK_handleTemperature(void *param)
       #if TEMPERATURE_CALC_METHOD==STEINHART_HART_METHOD
       // Use Steinhart-Hart
       // Serial.println("Calculating Steinhart-Hart:");
-      hotendTemp = calculateTempSteinhartHart(steinhartCoeff_A, 
+      //Steinhart-Hart
+      const double steinhartCoeff_A = ALPHA_COEFF;
+      const double steinhartCoeff_B = BETA_COEFF;
+      const double steinhartCoeff_C = 0.0;
+
+      hotendTemperature = calculateTempSteinhartHart(steinhartCoeff_A, 
                                               steinhartCoeff_B, 
                                               steinhartCoeff_C, 
                                               NORM_TEMP, 
                                               measuredRes, 
-                                              &thermistor0Lut); 
+                                              lutPtr); 
       #else
-      hotendTemp = LookupTemperature(adcRawRead, &thermistor0Lut, measuredRes);
+      hotendTemperature = LookupTemperature(adcRawRead, lutPtr, measuredRes);
       #endif
-
-      FFF_Oled_updateTemperature(hotendTemp);
-      FFF_Oled_updatePullMotSpeed(pwmFrequency);
-      FFF_Oled_updateExtruderMotSpeed(EXTRUDE_RATE_STEPS_PS);
-
     }
 
-    double diff = hotendTemp - oldTemp; 
+    double diff = hotendTemperature - oldTemp; 
     if (diff < 0.0)
     {
       diff *= -1;
@@ -301,14 +301,18 @@ void TASK_handleTemperature(void *param)
     if (diff > MAX_TEMP_DELTA_DEG)
     {
       // Some erroneous reading so take the previous
-      hotendTemp = oldTemp; 
+      hotendTemperature = oldTemp; 
     } 
     else 
     {
-      oldTemp = hotendTemp;
+      oldTemp = hotendTemperature;
     }
-
-
     vTaskDelay(ADC_SAMPLE_INTERVAL_MS);
   }
+}
+
+
+double FFF_Temp_getTemperature()
+{
+  return hotendTemperature;
 }

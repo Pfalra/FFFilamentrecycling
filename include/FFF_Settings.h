@@ -33,7 +33,7 @@
 #define DUMMY_THERMISTOR 0
 #define NTC_3950 1
 
-#define FFF_THERMISTOR0 NTC3950 // Sets the thermistor 
+#define FFF_THERMISTOR0 NTC_3950 // Sets the thermistor 
 
 
 /*********************************************************/

@@ -1,15 +1,15 @@
+#include <FFF_Settings.h>
 #include <FFF_Thermistors.h>
 #include <FFF_Types.h>
 #include <Arduino.h>
 #include <math.h>
-#include <FFF_Settings.h>
 
 #if FFF_THERMISTOR0 == NTC_3950
 #define THERM_SCALING NTC3950_BASE
 const int thermistor0_temps[] = NTC3950_TEMPERATURES;
 const float thermistor0_resistances[] = NTC3950_RESISTANCE; 
 #else
-const int thermistor0_temps[] = DUMMY_THERMISTOR;
+const int thermistor0_temps[] = DUMMY_TEMPERATURES;
 const float thermistor0_resistances[] = DUMMY_RESISTANCE;
 #endif
 
@@ -38,5 +38,10 @@ void FFF_Therm_printLut()
     Serial.println("...");
 }
 
+
+FFF_Lut* FFF_Therm_getLut()
+{
+  return &thermistor0Lut;
+}
 
 
