@@ -1,8 +1,8 @@
 #include <ADS1X15.h>
 #include <Arduino.h>
-#include <FFF_Adc.hpp>
-#include <FFF_Settings.hpp>
-#include <FFF_Types.hpp>
+#include <FFF_Adc.h>
+#include <FFF_Settings.h>
+#include <FFF_Types.h>
 
 #define ADC_RECONNECTION_ATTEMPTS 10
 

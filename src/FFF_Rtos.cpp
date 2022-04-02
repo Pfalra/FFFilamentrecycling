@@ -1,16 +1,14 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include <FFF_Rtos.hpp>
-#include <FFF_Settings.hpp>
-#include <FFF_WiFi.hpp>
-#include <FFF_Pid.hpp>
-#include <FFF_Heater.hpp>
-#include <FFF_Stepper.hpp>
-#include <FFF_Log.hpp>
+#include <FFF_Rtos.h>
+#include <FFF_Settings.h>
+#include <FFF_WiFi.h>
+#include <FFF_Pid.h>
+#include <FFF_Heater.h>
+#include <FFF_Stepper.h>
+#include <FFF_Log.h>
 
-extern TaskHandle_t UdpTaskHandle;
-extern TaskHandle_t InitWiFiTaskHandle;
 
 bool startApp = false;
 bool stopApp = false;
@@ -23,21 +21,21 @@ FFF_AppStatus gAppStatus = APP_STOPPED;
 /******************************************/
 void ResumeAppTasks()
 {
-  vTaskResume(PIDDiameterTaskHandle);
+  vTaskResume(FFF_Pid_getDiameterTaskHandle());
 }
 
 
 void DeleteAppTasks()
 {
-  vTaskDelete(PIDDiameterTaskHandle);
-  vTaskDelete(PIDTemperatureTaskHandle);
+  vTaskDelete(*FFF_Pid_getDiameterTaskHandle());
+  vTaskDelete(*FFF_Pid_getTemperatureTaskHandle());
 }
 
 
 void SuspendAppTasks()
 {
-  vTaskSuspend(LogTaskHandle);
-  vTaskSuspend(PIDDiameterTaskHandle);
+  vTaskSuspend(*FFF_Log_getTaskHandle());
+  vTaskSuspend(*FFF_Pid_getDiameterTaskHandle());
 }
 
 
@@ -49,7 +47,7 @@ void CreateAppTasks()
       8192,                // Stack size (bytes)
       NULL,                // Parameter to pass
       PID_DIAMETER_TASK_PRIO,                   // Task priority
-      &PIDDiameterTaskHandle);
+      FFF_Pid_getDiameterTaskHandle());
 
   xTaskCreate(
       handleTempPID,       // Function that should be called
@@ -57,7 +55,7 @@ void CreateAppTasks()
       8192,                // Stack size (bytes)
       NULL,                // Parameter to pass
       PID_TEMP_TASK_PRIO,                   // Task priority
-      &PIDTemperatureTaskHandle);
+      FFF_Pid_getTemperatureTaskHandle());
   // FPGA Readout missing
 }
 
@@ -75,7 +73,7 @@ void CreateAppInitTasks()
       16384,              // Stack size (bytes)
       NULL,              // Parameter to pass
       3,                 // Task priority
-      &InitWiFiTaskHandle);
+      FFF_WiFi_getInitTaskHandle());
 
   /* ESP and SD don't like each other somehow. So deactivate it for now. (GPIO12)*/
   // xTaskCreate(

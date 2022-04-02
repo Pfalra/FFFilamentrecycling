@@ -1,11 +1,11 @@
-#include <FFF_WiFi.hpp>
+#include <FFF_WiFi.h>
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WiFiServer.h>
-#include <FFF_Types.hpp>
-#include <FFF_Settings.hpp>
-#include <FFF_Credentials.hpp>
-#include <FFF_Rtos.hpp>
+#include <FFF_Types.h>
+#include <FFF_Settings.h>
+#include <FFF_Credentials.h>
+#include <FFF_Rtos.h>
 
 
 /* TASK HANDLES */
@@ -197,4 +197,15 @@ void handleUdp(void *param)
 
     vTaskDelay(UDP_HANDLE_INTERVAL_MS);
   }
+}
+
+
+TaskHandle_t* FFF_WiFi_getInitTaskHandle()
+{
+  return &InitWiFiTaskHandle;
+}
+
+TaskHandle_t* FFF_WiFi_getUdpTaskHandle()
+{
+  return &UdpTaskHandle;
 }

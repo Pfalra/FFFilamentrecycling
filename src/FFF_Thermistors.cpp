@@ -1,6 +1,6 @@
-#include <FFF_Settings.hpp>
-#include <FFF_Thermistors.hpp>
-#include <FFF_Types.hpp>
+#include <FFF_Settings.h>
+#include <FFF_Thermistors.h>
+#include <FFF_Types.h>
 #include <Arduino.h>
 #include <math.h>
 

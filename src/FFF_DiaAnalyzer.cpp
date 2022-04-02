@@ -1,5 +1,5 @@
-#include <FFF_DiaAnalyzer.hpp>
-#include <FFF_Settings.hpp>
+#include <FFF_DiaAnalyzer.h>
+#include <FFF_Settings.h>
 #include <stdint.h>
 
 #define MAX(a, b) ((a) < (b) ? (b) : (a))
@@ -247,4 +247,10 @@ void TASK_handleDiaAnalysis(void* param)
 double FFF_DiaAn_getDiameter()
 {
     return diameterMeasurement.outputVal;
+}
+
+
+TaskHandle_t* FFF_DiaAn_getTaskHandle()
+{
+    return &FPGATaskHandle;
 }

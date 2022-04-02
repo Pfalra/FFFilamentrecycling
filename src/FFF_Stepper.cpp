@@ -1,8 +1,8 @@
 #include <Arduino.h>
-#include <FFF_Stepper.hpp>
-#include <FFF_Settings.hpp>
-#include <FFF_Types.hpp>
-#include <FFF_Pwm.hpp>
+#include <FFF_Stepper.h>
+#include <FFF_Settings.h>
+#include <FFF_Types.h>
+#include <FFF_Pwm.h>
 
 
 FFF_PwmHandle extruderPwm = 

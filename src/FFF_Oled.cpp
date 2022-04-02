@@ -1,12 +1,12 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 
-#include <FFF_Oled.hpp>
-#include <FFF_Graphics.hpp>
-#include <FFF_Temperature.hpp>
-#include <FFF_Stepper.hpp>
-#include <FFF_Settings.hpp>
-#include <FFF_DiaAnalyzer.hpp>
+#include <FFF_Oled.h>
+#include <FFF_Graphics.h>
+#include <FFF_Temperature.h>
+#include <FFF_Stepper.h>
+#include <FFF_Settings.h>
+#include <FFF_DiaAnalyzer.h>
 
 #include <pgmspace.h>
 
@@ -182,4 +182,10 @@ void TASK_handleOled(void* param)
         FFF_Oled_updateDiameter(FFF_DiaAn_getDiameter());
         vTaskDelay(OLED_REFRESH_INTERVAL_MS);
     }
+}
+
+
+TaskHandle_t* FFF_Oled_getTaskHandle()
+{
+    return &OledTaskHandle;
 }

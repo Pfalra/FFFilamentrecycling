@@ -1,7 +1,7 @@
-#include <FFF_Heater.hpp>
+#include <FFF_Heater.h>
 #include <stdint.h>
-#include <FFF_Settings.hpp>
-#include <FFF_Pwm.hpp>
+#include <FFF_Settings.h>
+#include <FFF_Pwm.h>
 #include <Arduino.h>
 
 FFF_PwmHandle heaterHandle = 

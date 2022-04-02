@@ -12,7 +12,7 @@ typedef enum FFF_Sdmode_e
 } FFF_Sdmode;
 
 
-TaskHandle_t initSDHandle;
+TaskHandle_t* initSDHandle;
 
 
 bool FFF_SD_Init(FFF_Sdmode mode);

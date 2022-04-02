@@ -3,6 +3,6 @@
 
 #include <Arduino.h>
 
-extern TaskHandle_t LogTaskHandle;
+TaskHandle_t* FFF_Log_getTaskHandle();
 
 #endif

@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <pgmspace.h>
 
-#include <FFF_Graphics.hpp>
+#include <FFF_Graphics.h>
 
 #pragma once
 

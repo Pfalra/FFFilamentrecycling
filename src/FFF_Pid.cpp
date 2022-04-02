@@ -1,8 +1,8 @@
 #include <Arduino.h>
-#include <FFF_Pid.hpp>
-#include <FFF_Settings.hpp>
-#include <FFF_Temperature.hpp>
-#include <FFF_Stepper.hpp>
+#include <FFF_Pid.h>
+#include <FFF_Settings.h>
+#include <FFF_Temperature.h>
+#include <FFF_Stepper.h>
 
 
 TaskHandle_t PIDDiameterTaskHandle;
@@ -75,3 +75,14 @@ void handleTempPID(void *param)
   }
 }
 
+
+TaskHandle_t* FFF_Pid_getDiameterTaskHandle()
+{
+    return &PIDDiameterTaskHandle;
+}
+
+
+TaskHandle_t* FFF_Pid_getTemperatureTaskHandle()
+{
+    return &PIDTemperatureTaskHandle;
+}

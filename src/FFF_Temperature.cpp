@@ -1,11 +1,11 @@
-#include <FFF_Types.hpp>
-#include <FFF_Thermistors.hpp>
-#include <FFF_Temperature.hpp>
-#include <FFF_Adc.hpp>
+#include <FFF_Types.h>
+#include <FFF_Thermistors.h>
+#include <FFF_Temperature.h>
+#include <FFF_Adc.h>
 #include <Arduino.h>
 
 
-TaskHandle_t ADCTaskHandle;
+TaskHandle_t TemperatureReadTaskHandle;
 
 
 /******************************************/
@@ -318,4 +318,10 @@ void TASK_handleTemperature(void *param)
 double FFF_Temp_getTemperature()
 {
   return hotendTemperature;
+}
+
+
+TaskHandle_t* FFF_Temp_getTaskHandle()
+{
+  return &TemperatureReadTaskHandle;
 }

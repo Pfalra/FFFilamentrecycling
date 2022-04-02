@@ -5,9 +5,8 @@
 #include <Arduino.h>
 
 
-/* TASK HANDLES */
-extern TaskHandle_t UdpTaskHandle;
-extern TaskHandle_t InitWiFiTaskHandle;
+TaskHandle_t* FFF_WiFi_getInitTaskHandle();
+TaskHandle_t* FFF_WiFi_getUdpTaskHandle();
 
 void FFF_initializeWiFi(const char* ssid, const char* pwd);
 
