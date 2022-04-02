@@ -1,12 +1,16 @@
-#include <FFF_WiFi.h>
+#include <FFF_WiFi.hpp>
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WiFiServer.h>
-#include <FFF_Types.h>
-#include <FFF_Settings.h>
-#include <FFF_Credentials.h>
-#include <FFF_Rtos.h>
+#include <FFF_Types.hpp>
+#include <FFF_Settings.hpp>
+#include <FFF_Credentials.hpp>
+#include <FFF_Rtos.hpp>
 
+
+/* TASK HANDLES */
+TaskHandle_t UdpTaskHandle;
+TaskHandle_t InitWiFiTaskHandle;
 
 // Prototypes 
 void FFF_onWiFiEvent(WiFiEvent_t event);
@@ -35,7 +39,7 @@ void TASK_InitializeWiFi(void *param)
     &UdpTaskHandle);
 
   /* Make task only execute once */
-  vTaskDelete(initWiFiHandle);
+  vTaskDelete(InitWiFiTaskHandle);
 }
 
 

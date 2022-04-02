@@ -3,6 +3,8 @@
 
 #include <PID_v1.h>
 
+extern TaskHandle_t PIDDiameterTaskHandle;
+extern TaskHandle_t PIDTemperatureTaskHandle;
 
 void FFF_Pid_init();
 

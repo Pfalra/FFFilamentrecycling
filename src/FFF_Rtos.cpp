@@ -1,15 +1,16 @@
-#include <FFF_Rtos.h>
-#include <FFF_Settings.h>
-#include <FFF_WiFi.h>
-#include <FFF_Stepper.h>
-#include <FFF_Sd.h>
-#include <FFF_Adc.h>
-#include <FFF_Oled.h>
-#include <FFF_Graphics.h>
-#include <FFF_Credentials.h>
-#include <FFF_Heater.h>
-#include <FFF_Temperature.h>
+#include <stdint.h>
+#include <stdbool.h>
 
+#include <FFF_Rtos.hpp>
+#include <FFF_Settings.hpp>
+#include <FFF_WiFi.hpp>
+#include <FFF_Pid.hpp>
+#include <FFF_Heater.hpp>
+#include <FFF_Stepper.hpp>
+#include <FFF_Log.hpp>
+
+extern TaskHandle_t UdpTaskHandle;
+extern TaskHandle_t InitWiFiTaskHandle;
 
 bool startApp = false;
 bool stopApp = false;
@@ -30,7 +31,6 @@ void DeleteAppTasks()
 {
   vTaskDelete(PIDDiameterTaskHandle);
   vTaskDelete(PIDTemperatureTaskHandle);
-  // vTaskDelete(ADCTaskHandle);
 }
 
 
@@ -45,7 +45,7 @@ void CreateAppTasks()
 {
   xTaskCreate(
       handleDiameterMotorPID,      // Function that should be called
-      "PID Motor Handler", // Name of the task (for debugging)
+      "TASK: PID Motor Handler", // Name of the task (for debugging)
       8192,                // Stack size (bytes)
       NULL,                // Parameter to pass
       PID_DIAMETER_TASK_PRIO,                   // Task priority
@@ -53,7 +53,7 @@ void CreateAppTasks()
 
   xTaskCreate(
       handleTempPID,       // Function that should be called
-      "PID Temperature Handler", // Name of the task (for debugging)
+      "TASK: PID Temperature Handler", // Name of the task (for debugging)
       8192,                // Stack size (bytes)
       NULL,                // Parameter to pass
       PID_TEMP_TASK_PRIO,                   // Task priority
@@ -75,7 +75,7 @@ void CreateAppInitTasks()
       16384,              // Stack size (bytes)
       NULL,              // Parameter to pass
       3,                 // Task priority
-      &initWiFiHandle);
+      &InitWiFiTaskHandle);
 
   /* ESP and SD don't like each other somehow. So deactivate it for now. (GPIO12)*/
   // xTaskCreate(
@@ -86,7 +86,6 @@ void CreateAppInitTasks()
   //     2,               // Task priority
   //     &initSDHandle);
 }
-
 
 
 

@@ -1,11 +1,11 @@
-#include <FFF_Sd.h>
+#include <FFF_Sd.hpp>
 #include <SPI.h>
 #include <SD_MMC.h>
 #include <SD.h>
 #include <FS.h>
 #include <Arduino.h>
-#include <FFF_Types.h>
-#include <FFF_Settings.h>
+#include <FFF_Types.hpp>
+#include <FFF_Settings.hpp>
 
 bool reader_connected = false;
 

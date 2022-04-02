@@ -1,7 +1,7 @@
 #ifndef FFF_PWM_H
 #define FFF_PWM_H
 
-#include <FFF_Types.h>
+#include <FFF_Types.hpp>
 
 void FFF_Pwm_init(FFF_PwmHandle* handle);
 

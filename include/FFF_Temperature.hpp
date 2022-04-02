@@ -1,7 +1,9 @@
 #ifndef FFF_TEMPERATURE_H
 #define FFF_TEMPERATURE_H
 
-#include <FFF_Types.h>
+#include <FFF_Types.hpp>
+
+extern TaskHandle_t ADCTaskHandle;
 
 double LookupTemperature(double volts, FFF_Lut* lutPtr, double measuredRes);
 double FindResistance(int16_t temperature, FFF_Lut* lutPtr);

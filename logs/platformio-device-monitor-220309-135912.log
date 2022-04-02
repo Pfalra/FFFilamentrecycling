@@ -1,0 +1,67 @@
+�
+FFF Device starting up...
+Starting OLED
+Showing Logo
+I>Starting WiFi.
+
+I>Initializing other hardware/software
+
+I> ADC connected
+I> ADC Ready
+I> ADC initialized for channel: 3
+
+I>Init done
+WiFi SSID: FFF-Device
+WiFi PWD: FFF-Device2022
+
+
+> SoftAP up and running!
+IP address: 	192.168.4.1
+I>WiFi init done
+ESP32 soft AP started
+Reading UDP packets...
+Station connected to ESP32 soft AP
+Received:
+START
+I>Configured for log: Application Log
+App started
+TEMP;DIAMETER;PULLMOT_SPD;EXTMOT_SPD;
+28.66;3.50;50.00;42.00
+28.66;3.50;50.00;42.00
+24.98;3.50;50.00;42.00
+24.86;3.50;50.00;42.00
+24.83;3.50;50.00;42.00
+24.89;3.50;50.00;42.00
+24.80;3.50;50.00;42.00
+24.92;3.50;50.00;42.00
+24.92;3.50;50.00;42.00
+25.01;3.50;50.00;42.00
+24.89;3.50;50.00;42.00
+24.86;3.50;50.00;42.00
+24.80;3.50;50.00;42.00
+24.92;3.50;50.00;42.00
+24.92;3.50;50.00;42.00
+24.74;3.50;50.00;42.00
+24.92;3.50;50.00;42.00
+24.83;3.50;50.00;42.00
+24.92;3.50;50.00;42.00
+24.80;3.50;50.00;42.00
+24.80;3.50;50.00;42.00
+24.83;3.50;50.00;42.00
+24.95;3.50;50.00;42.00
+27.06;3.50;50.00;42.00
+27.61;3.50;50.00;42.00
+27.88;3.50;50.00;42.00
+27.75;3.50;50.00;42.00
+27.75;3.50;50.00;42.00
+27.20;3.50;50.00;42.00
+32.63;3.50;50.00;42.00
+27.55;3.50;50.00;42.00
+Received:
+STOP
+I>Unknown command
+27.28;3.50;50.00;42.00
+27.47;3.50;50.00;42.00
+Received:
+STOP
+Station disconnected from ESP32 soft AP

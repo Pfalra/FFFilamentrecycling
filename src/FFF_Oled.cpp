@@ -1,12 +1,18 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 
-#include <FFF_Oled.h>
-#include <FFF_Graphics.h>
-
-#include <FFF_Settings.h>
+#include <FFF_Oled.hpp>
+#include <FFF_Graphics.hpp>
+#include <FFF_Temperature.hpp>
+#include <FFF_Stepper.hpp>
+#include <FFF_Settings.hpp>
+#include <FFF_DiaAnalyzer.hpp>
 
 #include <pgmspace.h>
+
+
+TaskHandle_t OledTaskHandle;
+
 
 Adafruit_SSD1306 oled(OLED_WIDTH_PX, OLED_HEIGHT_PX);
 
@@ -60,6 +66,7 @@ DisplayLine* lineArr[] = {&tempLine, &diameterLine, &extVelLine, &pullVelLine, N
 
 /* Graphics */
 extern const uint8_t myFFFLogo[];
+
 
 
 void FFF_Oled_init()
@@ -124,6 +131,7 @@ void FFF_Oled_updateExtruderMotSpeed(double motSpeed)
     FFF_Oled_updateDisplay();
 }
 
+
 void FFF_Oled_updatePullMotSpeed(double motSpeed)
 {
     String pullMotStr = String(motSpeed, 2);
@@ -160,4 +168,18 @@ void FFF_Oled_clearDisplay()
 Adafruit_SSD1306* FFF_Oled_getOLED()
 {
     return &oled;
+}
+
+
+void TASK_handleOled(void* param)
+{
+    while(1)
+    {
+        FFF_Oled_clearDisplay();
+        FFF_Oled_updateExtruderMotSpeed(FFF_Stepper_getExtruderStepperSpeed());
+        FFF_Oled_updatePullMotSpeed(FFF_Stepper_getPullStepperSpeed());
+        FFF_Oled_updateTemperature(FFF_Temp_getTemperature());
+        FFF_Oled_updateDiameter(FFF_DiaAn_getDiameter());
+        vTaskDelay(OLED_REFRESH_INTERVAL_MS);
+    }
 }

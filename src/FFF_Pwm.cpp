@@ -1,6 +1,6 @@
 #include <stdint.h>
-#include <FFF_Types.h>
-#include <FFF_Pwm.h>
+#include <FFF_Types.hpp>
+#include <FFF_Pwm.hpp>
 #include <Arduino.h>
 
 

@@ -1,4 +1,6 @@
-#include <FFF_Settings.h>
+#ifndef FFF_THERMISTORS_H
+#define FFF_THERMISTORS_H
+#include <FFF_Settings.hpp>
 
 #define END_TEMPS 9999
 /************************************/
@@ -39,3 +41,6 @@
 
 void FFF_Therm_printLut();
 FFF_Lut* FFF_Therm_getLut();
+
+
+#endif

@@ -14,14 +14,14 @@
 #include <math.h>
 
 /* FFF includes */
-#include <FFF_Types.h>
-#include <FFF_Rtos.h>
-#include <FFF_Settings.h>
-#include <FFF_Oled.h>
-#include <FFF_Adc.h>
-#include <FFF_Stepper.h>
-#include <FFF_Uart.h>
-#include <FFF_Pid.h>
+#include <FFF_Types.hpp>
+#include <FFF_Rtos.hpp>
+#include <FFF_Settings.hpp>
+#include <FFF_Oled.hpp>
+#include <FFF_Adc.hpp>
+#include <FFF_Stepper.hpp>
+#include <FFF_Uart.hpp>
+#include <FFF_Pid.hpp>
 
 const char paramArr[] = "TEMP" DELIMITER \
               "DIAMETER" DELIMITER \

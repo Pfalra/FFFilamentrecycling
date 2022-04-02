@@ -1,8 +1,9 @@
 {
     "files.associations": {
         "fff_temperature.h": "c",
-        "fff_rtos.h": "c",
+        "FFF_Rtos.hpp": "c",
         "arduino.h": "c",
-        "fff_types.h": "c"
+        "FFF_Types.hpp": "c",
+        "FFF_Settings.hpp": "c"
     }
 }

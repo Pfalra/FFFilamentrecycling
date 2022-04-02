@@ -1,8 +1,8 @@
 #include <Arduino.h>
-#include <FFF_Stepper.h>
-#include <FFF_Settings.h>
-#include <FFF_Types.h>
-#include <FFF_Pwm.h>
+#include <FFF_Stepper.hpp>
+#include <FFF_Settings.hpp>
+#include <FFF_Types.hpp>
+#include <FFF_Pwm.hpp>
 
 
 FFF_PwmHandle extruderPwm = 
@@ -116,4 +116,22 @@ void FFF_Stepper_stopAll()
   FFF_Stepper_stop(&extruderStepper);
   FFF_Stepper_stop(&pullStepper);
   FFF_Stepper_stop(&winchStepper);
+}
+
+
+double FFF_Stepper_getWinchStepperSpeed()
+{
+  return winchStepper.gearRatio*winchPwm.freq;
+}
+
+
+double FFF_Stepper_getPullStepperSpeed()
+{
+  return pullStepper.gearRatio*pullPwm.freq;
+}
+
+
+double FFF_Stepper_getExtruderStepperSpeed()
+{
+  return extruderStepper.gearRatio*extruderPwm.freq;
 }

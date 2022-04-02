@@ -1,2 +1,3 @@
-#include <FFF_WiFi.h>
-#include <FFF_Log.h>
+#include <FFF_Log.hpp>
+
+TaskHandle_t LogTaskHandle;

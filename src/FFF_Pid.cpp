@@ -1,30 +1,12 @@
 #include <Arduino.h>
-#include <FFF_Pid.h>
-#include <FFF_Settings.h>
-#include <FFF_Temperature.h>
-#include <FFF_Stepper.h>
+#include <FFF_Pid.hpp>
+#include <FFF_Settings.hpp>
+#include <FFF_Temperature.hpp>
+#include <FFF_Stepper.hpp>
 
-uint8_t diaMeasPoints[MEASUREMENT_LENGTH];
 
-FFF_Measurement diameterMeasurement = {
-  .outputVal = 0.0,
-  .scalingCoeff = DIAMETER_SCALING_COEFF,
-  .mean = 0,
-  .len = MEASUREMENT_LENGTH,
-  .startIndex = SYNC_LENGTH + FIRST_DEAD_PIX,
-  .endIndex = MEASUREMENT_LENGTH - LAST_DEAD_PIX,
-  .maxIndex = 0,
-  .minIndex = 0,
-  .firstLimPass = 0,
-  .lastLimPass = 0,
-  .passHyst = DIA_MEAS_HYST,
-  .passWidth = 0,
-  .maxVal = 0,
-  .minVal = 0,
-  .analyzed = false,
-  .protectFlag = false,
-  .dataPoints = diaMeasPoints
-};
+TaskHandle_t PIDDiameterTaskHandle;
+TaskHandle_t PIDTemperatureTaskHandle;
 
 /* Filament control */
 double filDiameterMm = 0.0;
