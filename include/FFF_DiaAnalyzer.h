@@ -2,7 +2,7 @@
 #define FFF_DIAANALYZER_H
 
 #include <Arduino.h>
-#include <FFF_Types.hpp>
+#include <FFF_Types.h>
 
 extern TaskHandle_t FPGATaskHandle;
 

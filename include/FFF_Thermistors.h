@@ -1,6 +1,6 @@
 #ifndef FFF_THERMISTORS_H
 #define FFF_THERMISTORS_H
-#include <FFF_Settings.hpp>
+#include <FFF_Settings.h>
 
 #define END_TEMPS 9999
 /************************************/

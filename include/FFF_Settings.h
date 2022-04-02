@@ -1,7 +1,7 @@
 #ifndef FFF_SETTINGS_H
 #define FFF_SETTINGS_H
 
-#include <FFF_Types.hpp>
+#include <FFF_Types.h>
 
 /*********************************************************/
 /* GENERAL SETTINGS */

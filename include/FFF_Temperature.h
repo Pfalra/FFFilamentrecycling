@@ -1,7 +1,7 @@
 #ifndef FFF_TEMPERATURE_H
 #define FFF_TEMPERATURE_H
 
-#include <FFF_Types.hpp>
+#include <FFF_Types.h>
 
 extern TaskHandle_t ADCTaskHandle;
 

@@ -1,7 +1,7 @@
 #ifndef FFF_STEPPER_H
 #define FFF_STEPPER_H
 
-#include <FFF_Types.hpp>
+#include <FFF_Types.h>
 
 extern FFF_Stepper extruderStepper;
 extern FFF_Stepper winchStepper;

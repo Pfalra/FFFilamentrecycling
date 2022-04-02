@@ -1,7 +1,7 @@
 #ifndef FFF_WIFI_H
 #define FFF_WIFI_H
 
-#include <FFF_Types.hpp>
+#include <FFF_Types.h>
 #include <Arduino.h>
 
 
