@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 // #define NULL 0x0
 
@@ -122,6 +123,7 @@ typedef struct FFF_Buffer_s
 {
   uint16_t len;
   uint8_t* dataPtr;
+  bool protect;
 } FFF_Buffer;
 
 #endif

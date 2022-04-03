@@ -1,6 +1,7 @@
 #include <FFF_DiaAnalyzer.h>
 #include <FFF_Settings.h>
 #include <stdint.h>
+#include <FFF_Uart.h>
 
 #define MAX(a, b) ((a) < (b) ? (b) : (a))
 
@@ -227,18 +228,6 @@ void FFF_DiaAn_analyze(FFF_Measurement *meas)
 }
 
 
-void TASK_handleDiaAnalysis(void* param)
-{
-    // This task will get activated from ISR of UART
-    while(1)
-    {
-
-        // Task suspends itself
-        vTaskSuspend(NULL);
-    }
-}
-
-
 double FFF_DiaAn_getDiameter()
 {
     return diameterMeasurement.outputVal;
@@ -248,4 +237,34 @@ double FFF_DiaAn_getDiameter()
 TaskHandle_t* FFF_DiaAn_getTaskHandle()
 {
     return &DiaReadTaskHandle;
+}
+
+
+
+
+/***************************************/
+/* TASK */
+/***************************************/
+void TASK_handleDiaAnalysis(void* param)
+{
+    // This task will get activated from ISR of UART
+    while(1)
+    {
+        // After suspension we have to get the current filled up buffer for analysis and protect it
+        FFF_Buffer* bufPtr = FFF_Uart_getFilledBufferUart2();
+
+        if (bufPtr)
+        {
+            FFF_Uart_protectBufferUart2(bufPtr);
+
+
+            FFF_Uart_unprotectBufferUart2(bufPtr);
+        } 
+        else 
+        {
+            // Do nothing and wait for the next reactivation
+        }
+        // Task suspends itself
+        vTaskSuspend(NULL);
+    }
 }

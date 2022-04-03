@@ -4,6 +4,7 @@
 #include <FFF_DiaAnalyzer.h>
 #include <driver/uart.h>
 
+
 /**********/
 /* UART 2 */
 /**********/
@@ -17,8 +18,8 @@ uint16_t u2rxLen = 0;
 
 TaskHandle_t UartFpgaTaskHandle;
 
-uint8_t uart2Buf0[MEASUREMENT_LENGTH];
-uint8_t uart2Buf1[MEASUREMENT_LENGTH];
+uint8_t uart2Buf0[MEASUREMENT_LENGTH + SYNC_LENGTH];
+uint8_t uart2Buf1[MEASUREMENT_LENGTH + SYNC_LENGTH];
 
 FFF_Buffer FFF_Buf_uart2_data0 = 
 {
@@ -46,6 +47,10 @@ uint16_t nInd = 0;
 bool cByte = false;
 uint16_t cInd = 0;
 bool syncDetected = false;
+bool bufferWriteActive;
+
+uint8_t currByte = 0;
+uint32_t cnt = 0;
 
 
 
@@ -77,84 +82,150 @@ void FFF_Uart_init()
 }
 
 
+
+inline void discardSyncDetect()
+{
+  sByte = false;
+  sInd = 0;
+  yByte = false;
+  yInd = 0;
+  nByte = false;
+  nInd = 0;
+  cByte = false;
+  cInd = 0;
+}
+
+
+inline bool checkSync()
+{
+  if (currByte == 'S')
+  {
+    sInd = cnt;
+    sByte = true;
+  }
+  else if (currByte == 'Y')
+  {
+    yInd = cnt;
+    if (yInd - sInd == 1 && sByte)
+    {
+      yByte = true;
+    } 
+    else 
+    {
+      discardSyncDetect();
+    }
+  } 
+  else if (currByte == 'N')
+  {
+    nInd = cnt;
+    if (nInd - yInd == 1 && yByte)
+    {
+      nByte = true;
+    }
+    else 
+    {
+      discardSyncDetect();
+    }
+  } 
+  else if (currByte == 'C')
+  {
+    cInd = cnt;
+    if (cInd - nInd == 1 && cByte)
+    {
+      cByte = true;
+    }
+    else 
+    {
+      discardSyncDetect();
+    }
+  }
+
+  
+  if (sByte && yByte && nByte && cByte)
+  {
+    cnt = 0;
+    return true;
+  }
+
+  return false;
+}
+
+
+inline void switchActiveBuffer()
+{
+  if (activeBufPtr == &FFF_Buf_uart2_data0)
+  {
+    activeBufPtr = &FFF_Buf_uart2_data1;
+  }
+  else 
+  {
+    activeBufPtr = &FFF_Buf_uart2_data0;
+  }
+}
+
+/*************************************************/
+/* INTERRUPT HANDLER */
+/*************************************************/
 static void IRAM_ATTR uart2_isr_handler(void *arg)
 {
   uint16_t rx_fifo_len, status;
   uint16_t i = 0;
-  uint16_t cnt = 0;
-
-  bool invalidSync = false;
 
   status = UART2.int_st.val;
   rx_fifo_len = UART2.status.rxfifo_cnt;
 
   while(rx_fifo_len)
-  {
-    uint8_t tempByte = UART2.fifo.rw_byte;
+  { // FIFO WHILE
+    currByte = UART2.fifo.rw_byte;
 
-    if (tempByte == 'S')
-    {
-      sByte = true;
-      sInd = cnt;
-    }
-    else if (tempByte == 'Y')
-    {
-      yByte = true;
-      yInd = cnt;
-      
-      if (yInd - sInd != 1)
+    if (bufferWriteActive && !activeBufPtr->protect)
+    { // WRITING TO BUFFER
+      // Normal operation, we just write to the buffer
+      activeBufPtr->dataPtr[activeBufPtr->len] = currByte;
+      // Prevent out of bounds issues
+      if (activeBufPtr->len < MEASUREMENT_LENGTH)
       {
-        invalidSync = true;
+        activeBufPtr->len++;
+      }
+      else 
+      {
+        // We would write out of bounds 
+        // so reset the length and don't write to a buffer anymore
+        bufferWriteActive = false;
+        activeBufPtr->len = 0;
+      }
+
+      if (checkSync())
+      {
+        // Prevent out of bounds issues
+        if (activeBufPtr->len > SYNC_LENGTH)
+        {
+          activeBufPtr->len -= SYNC_LENGTH;
+          // Task will retrieve the filled buffer via a getter
+          xTaskResumeFromISR(FFF_DiaAn_getTaskHandle());
+          switchActiveBuffer();
+        }
+        else 
+        {
+          // Some error occured so go into listen-only mode again
+          activeBufPtr->len = 0;
+          bufferWriteActive = false;
+        }
       }
     } 
-    else if (tempByte == 'N')
-    {
-      nByte = true;
-      nInd = cnt;
-      
-      if (nInd - yInd != 1)
+    else 
+    { // NOT WRITING TO BUFFER (LISTEN-ONLY MODE)
+      // While we are not writing to a buffer we must detect sync
+      if (checkSync())
       {
-        invalidSync = true;
-      }
-    } 
-    else if (tempByte == 'C')
-    {
-      cByte = true;
-      cInd = cnt;
-      
-      if (cInd - nInd != 1)
-      {
-        invalidSync = true;
+        bufferWriteActive = true;
       }
     }
-
-
-    if (invalidSync)
-    {
-      sByte = false;
-      yByte = false;
-      nByte = false;
-      cByte = false;
-    }
-
 
     rx_fifo_len--;
-    cnt++;
-  }
+    cnt++;    
+  } // END FIFO WHILE
 
-  if (sByte && yByte && nByte && cByte)
-  {
-    syncDetected = true;
-    sByte = false;
-    yByte = false;
-    nByte = false;
-    cByte = false;
-
-    BaseType_t xYieldRequired;
-
-    // Resume the suspended task.
-    xYieldRequired = xTaskResumeFromISR(FFF_DiaAn_getTaskHandle());
-  }
   // after reading bytes from buffer clear UART interrupt status
   uart_clear_intr_status(UART_NUM_2, UART_RXFIFO_FULL_INT_CLR|UART_RXFIFO_TOUT_INT_CLR);
 }
@@ -166,7 +237,6 @@ TaskHandle_t* FFF_Uart_getTaskHandleUart2()
 }
 
 
-
 QueueHandle_t* FFF_Uart_getQueueHandleUart2()
 {
   return &uart2_queue;
@@ -176,4 +246,44 @@ QueueHandle_t* FFF_Uart_getQueueHandleUart2()
 FFF_Buffer* FFF_Uart_getCurrentBufferUart2()
 {
   return activeBufPtr;
+}
+
+
+FFF_Buffer* FFF_Uart_getFilledBufferUart2()
+{
+  FFF_Buffer* retBufPtr;
+  if (activeBufPtr == &FFF_Buf_uart2_data0)
+  {
+    retBufPtr = &FFF_Buf_uart2_data1;
+  }
+
+  retBufPtr = &FFF_Buf_uart2_data0;
+
+
+  if (retBufPtr->protect)
+  {
+    return NULL;
+  }
+  else 
+  {
+    return retBufPtr;
+  }
+}
+
+
+// Protects the buffer that is currently not active
+void FFF_Uart_protectBufferUart2(FFF_Buffer* bufPtr)
+{
+  if (bufPtr)
+  {
+    bufPtr->protect = true;
+  }
+}
+
+void FFF_Uart_unprotectBufferUart2(FFF_Buffer* bufPtr)
+{
+  if (bufPtr)
+  {
+    bufPtr->protect = false;
+  }
 }
