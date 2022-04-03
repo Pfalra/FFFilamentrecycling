@@ -118,4 +118,10 @@ typedef struct FFF_Log_s
 } FFF_Log;
 
 
+typedef struct FFF_Buffer_s
+{
+  uint16_t len;
+  uint8_t* dataPtr;
+} FFF_Buffer;
+
 #endif

@@ -5,8 +5,7 @@
 #define MAX(a, b) ((a) < (b) ? (b) : (a))
 
 
-TaskHandle_t FPGATaskHandle;
-
+TaskHandle_t DiaReadTaskHandle;
 
 bool diaBuffer0Ready = false;
 bool diaBuffer1Ready = false;
@@ -228,19 +227,15 @@ void FFF_DiaAn_analyze(FFF_Measurement *meas)
 }
 
 
-void TASK_handleFpgaRead(void *param)
-{
-  while (1)
-  {
-    // Read from Serial2 and analyze the stream
-    vTaskDelay(FPGA_CALCULATE_DIAMETER_INTERVAL_MS);
-  }
-}
-
-
 void TASK_handleDiaAnalysis(void* param)
 {
     // This task will get activated from ISR of UART
+    while(1)
+    {
+
+        // Task suspends itself
+        vTaskSuspend(NULL);
+    }
 }
 
 
@@ -252,5 +247,5 @@ double FFF_DiaAn_getDiameter()
 
 TaskHandle_t* FFF_DiaAn_getTaskHandle()
 {
-    return &FPGATaskHandle;
+    return &DiaReadTaskHandle;
 }

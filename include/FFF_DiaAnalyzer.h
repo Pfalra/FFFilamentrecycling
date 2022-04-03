@@ -7,6 +7,6 @@
 void FFF_DiaAn_analyze(FFF_Measurement* meas);
 void TASK_handleDiaAnalysis(void* param);
 double FFF_DiaAn_getDiameter();
-void TASK_handleFpgaRead(void *param);
+TaskHandle_t* FFF_DiaAn_getTaskHandle();
 
 #endif

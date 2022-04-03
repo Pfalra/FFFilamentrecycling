@@ -8,7 +8,10 @@
 #include <FFF_Heater.h>
 #include <FFF_Stepper.h>
 #include <FFF_Log.h>
+#include <FFF_DiaAnalyzer.h>
 
+#define MAX_CORES 2
+#define KBYTE 1024
 
 bool startApp = false;
 bool stopApp = false;
@@ -44,7 +47,7 @@ void CreateAppTasks()
   xTaskCreate(
       TASK_handleDiameterMotorPID,      // Function that should be called
       "TASK: PID Motor Handler", // Name of the task (for debugging)
-      8192,                // Stack size (bytes)
+      4 * KBYTE,                // Stack size (bytes)
       NULL,                // Parameter to pass
       PID_DIAMETER_TASK_PRIO,                   // Task priority
       FFF_Pid_getDiameterTaskHandle());
@@ -52,11 +55,20 @@ void CreateAppTasks()
   xTaskCreate(
       TASK_handleTempPID,       // Function that should be called
       "TASK: PID Temperature Handler", // Name of the task (for debugging)
-      8192,                // Stack size (bytes)
+      4 * KBYTE,                // Stack size (bytes)
       NULL,                // Parameter to pass
       PID_TEMP_TASK_PRIO,                   // Task priority
       FFF_Pid_getTemperatureTaskHandle());
-  // FPGA Readout missing
+
+  xTaskCreatePinnedToCore(
+      TASK_handleDiaAnalysis,         // Function that should be called
+      "TASK: Diameter Analysis",  // Name of the task (for debugging)
+      10 * KBYTE,                 // Stack size (bytes)
+      NULL,                       // Parameter to pass
+      PID_TEMP_TASK_PRIO,         // Task priority
+      FFF_DiaAn_getTaskHandle(),
+      1 // CoreId
+      );
 }
 
 
@@ -156,3 +168,4 @@ FFF_AppStatus FFF_Rtos_getAppStatus()
 {
   return gAppStatus;
 }
+
