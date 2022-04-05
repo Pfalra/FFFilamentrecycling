@@ -9,6 +9,8 @@
 #include <FFF_Stepper.h>
 #include <FFF_Log.h>
 #include <FFF_DiaAnalyzer.h>
+#include <FFF_Oled.h>
+#include <FFF_Temperature.h>
 
 #define MAX_CORES 2
 #define KBYTE 1024
@@ -65,7 +67,7 @@ void CreateAppTasks()
       "TASK: Diameter Analysis",  // Name of the task (for debugging)
       10 * KBYTE,                 // Stack size (bytes)
       NULL,                       // Parameter to pass
-      PID_TEMP_TASK_PRIO,         // Task priority
+      DIA_CALC_TASK_PRIO,         // Task priority
       FFF_DiaAn_getTaskHandle(),
       1 // CoreId
       );
@@ -74,18 +76,32 @@ void CreateAppTasks()
 
 void CreateAppInitTasks()
 {
-  /* SD Mounting and Setting up Wifi can take some time and 
-    should not interfere with the other stuff. So we set them up 
-    in task context 
-  */
-  /* Create tasks for further initializations */
-  xTaskCreate(
-      TASK_InitializeWiFi,    // Function that should be called
-      "Initialize WiFi", // Name of the task (for debugging)
-      16384,              // Stack size (bytes)
+  // /* Create tasks for further initializations */
+  // xTaskCreate(
+  //     TASK_InitializeWiFi,    // Function that should be called
+  //     "Initialize WiFi",      // Name of the task (for debugging)
+  //     32 + KBYTE,             // Stack size (bytes)
+  //     NULL,               // Parameter to pass
+  //     WIFI_INIT_PRIO,     // Task priority
+  //     FFF_WiFi_getInitTaskHandle());
+
+  xTaskCreatePinnedToCore(
+      TASK_handleTemperature,    // Function that should be called
+      "TASK: Track Temperature", // Name of the task (for debugging)
+      4 * KBYTE,              // Stack size (bytes)
       NULL,              // Parameter to pass
-      3,                 // Task priority
-      FFF_WiFi_getInitTaskHandle());
+      ADC_TASK_PRIO,                 // Task priority
+      FFF_Temp_getTaskHandle(),
+      1);      
+
+  xTaskCreatePinnedToCore(
+      TASK_handleOled,       // Function that should be called
+      "TASK: OLED Handler", // Name of the task (for debugging)
+      4 * KBYTE,                // Stack size (bytes)
+      NULL,                // Parameter to pass
+      OLED_TASK_PRIO,                   // Task priority
+      FFF_Oled_getTaskHandle(),
+      1);
 
   /* ESP and SD don't like each other somehow. So deactivate it for now. (GPIO12)*/
   // xTaskCreate(

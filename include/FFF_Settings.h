@@ -155,7 +155,7 @@
 #define PID_DIAMETER_INTERVAL_MS            1000
 #define FPGA_CALCULATE_DIAMETER_INTERVAL_MS 1000
 #define ADC_SAMPLE_INTERVAL_MS              500
-#define OLED_REFRESH_INTERVAL_MS           250
+#define OLED_REFRESH_INTERVAL_MS           400
 
 
 /*********************************************************/
@@ -164,9 +164,11 @@
 #define PID_TEMP_TASK_PRIO      6
 #define LOG_TASK_PRIO           2
 #define UDP_TASK_PRIO           3
-#define FPGA_CALC_TASK_PRIO     4
+#define DIA_CALC_TASK_PRIO      6
 #define PID_DIAMETER_TASK_PRIO  5
 #define ADC_TASK_PRIO           5
+#define OLED_TASK_PRIO          2
+#define WIFI_INIT_PRIO          3
 
 
 /*********************************************************/

@@ -7,6 +7,7 @@
 
 TaskHandle_t* FFF_WiFi_getInitTaskHandle();
 TaskHandle_t* FFF_WiFi_getUdpTaskHandle();
+void FFF_WiFi_init();
 
 void FFF_initializeWiFi(const char* ssid, const char* pwd);
 

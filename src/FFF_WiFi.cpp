@@ -21,8 +21,7 @@ WiFiUDP udpConn;
 char udpRecPBuf[UDP_PBUF_SIZE];
 char udpSndPBuf[UDP_PBUF_SIZE];
 
-
-void TASK_InitializeWiFi(void *param)
+void FFF_WiFi_init()
 {
   /* Start WiFi */
   Serial.println("I>Starting WiFi.");
@@ -39,6 +38,12 @@ void TASK_InitializeWiFi(void *param)
     UDP_TASK_PRIO, // Task priority
     &UdpTaskHandle);
 
+}
+
+
+void TASK_InitializeWiFi(void *param)
+{
+  FFF_WiFi_init();
   /* Make task only execute once */
   vTaskDelete(InitWiFiTaskHandle);
 }

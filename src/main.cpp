@@ -22,6 +22,7 @@
 #include <FFF_Stepper.h>
 #include <FFF_Uart.h>
 #include <FFF_Pid.h>
+#include <FFF_WiFi.h>
 
 const char paramArr[] = "TEMP" DELIMITER \
               "DIAMETER" DELIMITER \
@@ -33,6 +34,9 @@ void setup()
   FFF_Uart_init();
   Serial.println();
   Serial.println("FFF Device starting up...");
+
+  /* Initialize WiFi */
+  FFF_WiFi_init();
   
   /* Initialize OLED */
   FFF_Oled_init();

@@ -112,7 +112,6 @@ void FFF_Oled_updateTemperature(double tempVal)
 {
     String tempValStr = String(tempVal, 2);
     tempLine.outputStr = tempValStr;
-    FFF_Oled_updateDisplay();
 }
 
 
@@ -120,7 +119,6 @@ void FFF_Oled_updateDiameter(double diaVal)
 {
     String diaValStr = String(diaVal, 2);
     diameterLine.outputStr = diaValStr;
-    FFF_Oled_updateDisplay();
 }
 
 
@@ -128,7 +126,6 @@ void FFF_Oled_updateExtruderMotSpeed(double motSpeed)
 {
     String motSpeedStr = String(motSpeed, 2);
     extVelLine.outputStr = motSpeedStr;
-    FFF_Oled_updateDisplay();
 }
 
 
@@ -136,7 +133,6 @@ void FFF_Oled_updatePullMotSpeed(double motSpeed)
 {
     String pullMotStr = String(motSpeed, 2);
     pullVelLine.outputStr = pullMotStr;
-    FFF_Oled_updateDisplay();
 }
 
 
@@ -180,6 +176,7 @@ void TASK_handleOled(void* param)
         FFF_Oled_updatePullMotSpeed(FFF_Stepper_getPullStepperSpeed());
         FFF_Oled_updateTemperature(FFF_Temp_getTemperature());
         FFF_Oled_updateDiameter(FFF_DiaAn_getDiameter());
+        FFF_Oled_updateDisplay();
         vTaskDelay(OLED_REFRESH_INTERVAL_MS);
     }
 }
