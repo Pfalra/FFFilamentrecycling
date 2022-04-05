@@ -257,7 +257,7 @@ void TASK_handleDiaAnalysis(void* param)
         {
             FFF_Uart_protectBufferUart2(bufPtr);
 
-
+            Serial.println("ANALYZE FIRED");
             FFF_Uart_unprotectBufferUart2(bufPtr);
         } 
         else 

@@ -69,8 +69,8 @@ void FFF_Uart_init()
       .flow_ctrl = UART_HW_FLOWCTRL_DISABLE
   }; 
 
-  // release the pre registered UART handler/subroutine
-  ESP_ERROR_CHECK(uart_isr_free(UART_NUM_2));       
+  // // release the pre registered UART handler/subroutine
+  // ESP_ERROR_CHECK(uart_isr_free(UART_NUM_2));       
 
   // register new UART ISR subroutine
   ESP_ERROR_CHECK(uart_isr_register(UART_NUM_2, uart2_isr_handler, NULL, ESP_INTR_FLAG_IRAM, &handle_uart2_isr));
@@ -78,12 +78,11 @@ void FFF_Uart_init()
   uart_driver_install(UART_NUM_2, MEASUREMENT_LENGTH, 0, 8, &uart2_queue, 0);
   uart_param_config(UART_NUM_2, &uart2_config);  
   uart_set_pin(UART_NUM_2, TX_TO_FPGA_PIN, RX_TO_FPGA_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-  uart_enable_rx_intr(UART_NUM_2);
 }
 
 
 
-inline void discardSyncDetect()
+void IRAM_ATTR discardSyncDetect()
 {
   sByte = false;
   sInd = 0;
@@ -96,7 +95,7 @@ inline void discardSyncDetect()
 }
 
 
-inline bool checkSync()
+bool IRAM_ATTR checkSync()
 {
   if (currByte == 'S')
   {
@@ -151,7 +150,7 @@ inline bool checkSync()
 }
 
 
-inline void switchActiveBuffer()
+void IRAM_ATTR switchActiveBuffer()
 {
   if (activeBufPtr == &FFF_Buf_uart2_data0)
   {
@@ -286,4 +285,16 @@ void FFF_Uart_unprotectBufferUart2(FFF_Buffer* bufPtr)
   {
     bufPtr->protect = false;
   }
+}
+
+
+void FFF_Uart_activateInterruptRX_Uart2()
+{
+  uart_enable_rx_intr(UART_NUM_2);
+}
+
+
+void FFF_Uart_deactivateInterruptRX_Uart2()
+{
+  uart_disable_rx_intr(UART_NUM_2);
 }

@@ -6,6 +6,7 @@
 #include <FFF_Settings.h>
 #include <FFF_Credentials.h>
 #include <FFF_Rtos.h>
+#include <FFF_Uart.h>
 
 
 /* TASK HANDLES */
@@ -104,12 +105,14 @@ void FFF_onWiFiEvent(WiFiEvent_t event)
       break;
     case SYSTEM_EVENT_AP_START:
       Serial.println("ESP32 soft AP started");
+      FFF_Uart_activateInterruptRX_Uart2();
       break;
     case SYSTEM_EVENT_AP_STACONNECTED:
       Serial.println("Station connected to ESP32 soft AP");
       break;
     case SYSTEM_EVENT_AP_STADISCONNECTED:
       Serial.println("Station disconnected from ESP32 soft AP");
+      FFF_Uart_deactivateInterruptRX_Uart2();
       break;
     default: break;
   }

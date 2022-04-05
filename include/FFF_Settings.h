@@ -10,7 +10,7 @@
 #define NL "\r\n"
 #define FFF_LOG_FILE_FORMAT ".txt"
 #define FFF_VERSION "V0.1"
-#define SERIAL0_BAUDRATE 250000
+#define SERIAL0_BAUDRATE 500000 // DEBUG
 #define SERIAL2_BAUDRATE 500000 //FPGA
 #define DELIMITER ";"
 #define FFF_DEVICE_SUPPLY 3.3
