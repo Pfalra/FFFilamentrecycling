@@ -100,6 +100,7 @@ bool IRAM_ATTR checkSync()
   if (currByte == 'S')
   {
     sInd = cnt;
+    Serial.print('S');
     sByte = true;
   }
   else if (currByte == 'Y')
@@ -108,10 +109,12 @@ bool IRAM_ATTR checkSync()
     if (yInd - sInd == 1 && sByte)
     {
       yByte = true;
+      Serial.print('Y');
     } 
     else 
     {
       discardSyncDetect();
+      cnt = 0;
     }
   } 
   else if (currByte == 'N')
@@ -120,29 +123,35 @@ bool IRAM_ATTR checkSync()
     if (nInd - yInd == 1 && yByte)
     {
       nByte = true;
+      Serial.print('N');
     }
     else 
     {
       discardSyncDetect();
+      cnt = 0;
     }
   } 
   else if (currByte == 'C')
   {
     cInd = cnt;
-    if (cInd - nInd == 1 && cByte)
+    if (cInd - nInd == 1 && nByte)
     {
       cByte = true;
+      Serial.print('C');
     }
     else 
     {
       discardSyncDetect();
+      cnt = 0;
     }
   }
 
   
   if (sByte && yByte && nByte && cByte)
   {
+    discardSyncDetect();
     cnt = 0;
+    Serial.print('\n');
     return true;
   }
 
@@ -168,7 +177,6 @@ void IRAM_ATTR switchActiveBuffer()
 static void IRAM_ATTR uart2_isr_handler(void *arg)
 {
   uint16_t rx_fifo_len, status;
-  uint16_t i = 0;
 
   status = UART2.int_st.val;
   rx_fifo_len = UART2.status.rxfifo_cnt;
@@ -291,10 +299,12 @@ void FFF_Uart_unprotectBufferUart2(FFF_Buffer* bufPtr)
 void FFF_Uart_activateInterruptRX_Uart2()
 {
   uart_enable_rx_intr(UART_NUM_2);
+  Serial.println("I>Activated RX Interrupt for UART2");
 }
 
 
 void FFF_Uart_deactivateInterruptRX_Uart2()
 {
   uart_disable_rx_intr(UART_NUM_2);
+  Serial.println("I>Deactivated RX Interrupt for UART2");
 }

@@ -1,6 +1,8 @@
 #ifndef FFF_RTOS_H
 #define FFF_RTOS_H
 
+#include <FFF_Types.h>
+
 //TaskControlFunctions
 void CreateAppInitTasks();
 void CreateAppTasks();
@@ -23,6 +25,7 @@ void FFF_Rtos_stopApp();
 void FFF_Rtos_pauseApp();
 
 void FFF_Rtos_StartOS();
+FFF_AppStatus FFF_Rtos_getAppStatus();
 
 
 #endif 

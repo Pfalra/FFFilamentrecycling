@@ -110,7 +110,6 @@ void FFF_onWiFiEvent(WiFiEvent_t event)
       break;
     case SYSTEM_EVENT_AP_START:
       Serial.println("ESP32 soft AP started");
-      FFF_Uart_activateInterruptRX_Uart2();
       break;
     case SYSTEM_EVENT_AP_STACONNECTED:
       Serial.println("Station connected to ESP32 soft AP");

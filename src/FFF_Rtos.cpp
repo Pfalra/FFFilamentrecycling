@@ -11,6 +11,7 @@
 #include <FFF_DiaAnalyzer.h>
 #include <FFF_Oled.h>
 #include <FFF_Temperature.h>
+#include <FFF_Uart.h>
 
 #define MAX_CORES 2
 #define KBYTE 1024
@@ -26,26 +27,40 @@ FFF_AppStatus gAppStatus = APP_STOPPED;
 /******************************************/
 void ResumeAppTasks()
 {
+  /* Resume the diameter control */
   vTaskResume(FFF_Pid_getDiameterTaskHandle());
 }
 
 
 void DeleteAppTasks()
 {
-  vTaskDelete(*FFF_Pid_getDiameterTaskHandle());
-  vTaskDelete(*FFF_Pid_getTemperatureTaskHandle());
+  /* Stop the PID tasks for hotend temperature and diameter */
+
+  if (*FFF_Pid_getDiameterTaskHandle() != NULL)
+  {
+    vTaskDelete(*FFF_Pid_getDiameterTaskHandle());
+  }
+
+  if (*FFF_Pid_getTemperatureTaskHandle() != NULL)
+  {
+    vTaskDelete(*FFF_Pid_getTemperatureTaskHandle());
+  }
 }
 
 
 void SuspendAppTasks()
 {
+  /* Suspend the task for Logging and pause the PID for diameter */
   vTaskSuspend(*FFF_Log_getTaskHandle());
   vTaskSuspend(*FFF_Pid_getDiameterTaskHandle());
 }
 
-
+/******************************************/
+/* Task Creation */
+/******************************************/
 void CreateAppTasks()
 {
+  /* PID Task for the actual diameter control via motor speed */
   xTaskCreate(
       TASK_handleDiameterMotorPID,      // Function that should be called
       "TASK: PID Motor Handler", // Name of the task (for debugging)
@@ -54,6 +69,7 @@ void CreateAppTasks()
       PID_DIAMETER_TASK_PRIO,                   // Task priority
       FFF_Pid_getDiameterTaskHandle());
 
+  /* PID Task to control the temperature of the hotend */
   xTaskCreate(
       TASK_handleTempPID,       // Function that should be called
       "TASK: PID Temperature Handler", // Name of the task (for debugging)
@@ -62,6 +78,7 @@ void CreateAppTasks()
       PID_TEMP_TASK_PRIO,                   // Task priority
       FFF_Pid_getTemperatureTaskHandle());
 
+  /* Task to analyse the diameter. This will be triggered in ISR */
   xTaskCreatePinnedToCore(
       TASK_handleDiaAnalysis,         // Function that should be called
       "TASK: Diameter Analysis",  // Name of the task (for debugging)
@@ -76,7 +93,7 @@ void CreateAppTasks()
 
 void CreateAppInitTasks()
 {
-  // /* Create tasks for further initializations */
+  // /* WiFi init is currently done in setup. If in STA mode, do the connection in task context */
   // xTaskCreate(
   //     TASK_InitializeWiFi,    // Function that should be called
   //     "Initialize WiFi",      // Name of the task (for debugging)
@@ -85,6 +102,7 @@ void CreateAppInitTasks()
   //     WIFI_INIT_PRIO,     // Task priority
   //     FFF_WiFi_getInitTaskHandle());
 
+  /* Temperature tracking Task (read ADC and calc temperature) */
   xTaskCreatePinnedToCore(
       TASK_handleTemperature,    // Function that should be called
       "TASK: Track Temperature", // Name of the task (for debugging)
@@ -94,6 +112,7 @@ void CreateAppInitTasks()
       FFF_Temp_getTaskHandle(),
       1);      
 
+  /* Display info on the OLED periodically */
   xTaskCreatePinnedToCore(
       TASK_handleOled,       // Function that should be called
       "TASK: OLED Handler", // Name of the task (for debugging)
@@ -104,6 +123,7 @@ void CreateAppInitTasks()
       1);
 
   /* ESP and SD don't like each other somehow. So deactivate it for now. (GPIO12)*/
+  /* Initialize the SD. In task context to not interfere with the rest of the inits */
   // xTaskCreate(
   //     InitializeSD,    // Function that should be called
   //     "Initialize SD", // Name of the task (for debugging)
@@ -117,12 +137,17 @@ void CreateAppInitTasks()
 
 void FFF_Rtos_StartOS()
 {
+  /* Create the tasks that initialize the rest of the hardware. 
+  * They themselves also create their corresponding handling tasks
+  */
   CreateAppInitTasks();
 }
 
 
 void TASK_mainControlApp()
 {
+
+  /* STOP command was received */
   if (stopApp)
   {
     // Disable Heater
@@ -135,6 +160,8 @@ void TASK_mainControlApp()
     stopApp = false;
   }
 
+
+  /* START command was received */
   if (startApp)
   {
     if (gAppStatus == APP_STOPPED)
@@ -151,6 +178,7 @@ void TASK_mainControlApp()
     startApp = false;
   }
 
+  /* PAUSE command was received */
   if (pauseApp)
   {
     FFF_Stepper_stopAll();
@@ -161,16 +189,23 @@ void TASK_mainControlApp()
   }
 }
 
-
+/******************************************/
+/* App Control */
+/******************************************/
 void FFF_Rtos_startApp()
 {
+  FFF_Uart_activateInterruptRX_Uart2();
   startApp = true;
 }
 
 
 void FFF_Rtos_stopApp()
 {
-  stopApp = true;
+  if (FFF_Rtos_getAppStatus() != APP_STOPPED)
+  {
+    FFF_Uart_deactivateInterruptRX_Uart2();
+    stopApp = true;
+  }
 }
 
 
