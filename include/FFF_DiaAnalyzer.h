@@ -9,4 +9,6 @@ void TASK_handleDiaAnalysis(void* param);
 double FFF_DiaAn_getDiameter();
 TaskHandle_t* FFF_DiaAn_getTaskHandle();
 
+void FFF_DiaAn_giveBackSemaphoreFromISR();
+
 #endif

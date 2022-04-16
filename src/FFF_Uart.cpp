@@ -100,7 +100,7 @@ bool IRAM_ATTR checkSync()
   if (currByte == 'S')
   {
     sInd = cnt;
-    Serial.print('S');
+    // Serial.print('S');
     sByte = true;
   }
   else if (currByte == 'Y')
@@ -109,7 +109,7 @@ bool IRAM_ATTR checkSync()
     if (yInd - sInd == 1 && sByte)
     {
       yByte = true;
-      Serial.print('Y');
+      // Serial.print('Y');
     } 
     else 
     {
@@ -123,7 +123,7 @@ bool IRAM_ATTR checkSync()
     if (nInd - yInd == 1 && yByte)
     {
       nByte = true;
-      Serial.print('N');
+      // Serial.print('N');
     }
     else 
     {
@@ -137,7 +137,7 @@ bool IRAM_ATTR checkSync()
     if (cInd - nInd == 1 && nByte)
     {
       cByte = true;
-      Serial.print('C');
+      // Serial.print('C');
     }
     else 
     {
@@ -151,7 +151,7 @@ bool IRAM_ATTR checkSync()
   {
     discardSyncDetect();
     cnt = 0;
-    Serial.print('\n');
+    // Serial.print('\n');
     return true;
   }
 
@@ -202,14 +202,15 @@ static void IRAM_ATTR uart2_isr_handler(void *arg)
         activeBufPtr->len = 0;
       }
 
-      if (checkSync())
+      if (checkSync() == true)
       {
         // Prevent out of bounds issues
         if (activeBufPtr->len > SYNC_LENGTH)
         {
           activeBufPtr->len -= SYNC_LENGTH;
           // Task will retrieve the filled buffer via a getter
-          xTaskResumeFromISR(FFF_DiaAn_getTaskHandle());
+          FFF_DiaAn_giveBackSemaphoreFromISR();
+          // Serial.print('T');
           switchActiveBuffer();
         }
         else 
@@ -217,6 +218,7 @@ static void IRAM_ATTR uart2_isr_handler(void *arg)
           // Some error occured so go into listen-only mode again
           activeBufPtr->len = 0;
           bufferWriteActive = false;
+          // Serial.print('E');
         }
       }
     } 

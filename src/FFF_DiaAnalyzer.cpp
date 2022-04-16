@@ -2,9 +2,11 @@
 #include <FFF_Settings.h>
 #include <stdint.h>
 #include <FFF_Uart.h>
+#include <FFF_Rtos.h>
 
 #define MAX(a, b) ((a) < (b) ? (b) : (a))
 
+SemaphoreHandle_t syncUartSemaphore = NULL;
 
 TaskHandle_t DiaReadTaskHandle;
 
@@ -27,27 +29,56 @@ FFF_Measurement diameterMeasurement = {
   .passHyst = DIA_MEAS_HYST,
   .passWidth = 0,
   .maxVal = 0,
-  .minVal = 0,
+  .minVal = 255,
+  .maxPosEdge = 0,
+  .maxNegEdge = 0,
+  .posEdgeInd = 0,
+  .negEdgeInd = 0,
   .analyzed = false,
-  .protectFlag = false,
-  .dataPoints = diaMeasPoints
+  .dataBuffer = NULL
 };
 
 
 static inline void evalMinMax(FFF_Measurement *meas, uint16_t index)
 {
-    if (meas->maxVal < meas->dataPoints[index])
+    if (meas->maxVal < meas->dataBuffer->dataPtr[index])
     {
-        meas->maxVal = meas->dataPoints[index];
+        meas->maxVal = meas->dataBuffer->dataPtr[index];
         meas->maxIndex = index;
     }
 
-    if (meas->dataPoints[index] < meas->minVal)
+    if (meas->dataBuffer->dataPtr[index] < meas->minVal)
     {
-        meas->minVal = meas->dataPoints[index];
+        meas->minVal = meas->dataBuffer->dataPtr[index];
         meas->minIndex = index;
     }
 }
+
+
+static inline void evalDiffEdges(FFF_Measurement* meas, int16_t index)
+{
+    int16_t diff = meas->dataBuffer->dataPtr[index] - meas->dataBuffer->dataPtr[index - meas->passHyst];
+    if (diff >= 0)
+    {
+        // Positive edge
+        if (meas->maxPosEdge < diff)
+        {
+            meas->maxPosEdge = diff;
+            meas->posEdgeInd = index;
+        }
+    }
+    else 
+    {
+        // Negative edge
+
+        if (meas->maxNegEdge > diff)
+        {
+            meas->maxNegEdge = diff;
+            meas->negEdgeInd = index;
+        }
+    }
+}
+
 
 static uint16_t evalLimitPass(FFF_Measurement *meas, uint16_t index)
 {
@@ -56,7 +87,7 @@ static uint16_t evalLimitPass(FFF_Measurement *meas, uint16_t index)
 
     uint16_t tempHystIndex0, tempHystIndex1;
 
-    /* FIXME: Only working if we traverse the measurement data in forward direction */
+    /* FIXIT: Only working if we traverse the measurement data in forward direction */
     if (index - hystVal < meas->startIndex)
     {
         tempHystIndex0 = meas->startIndex;
@@ -77,24 +108,24 @@ static uint16_t evalLimitPass(FFF_Measurement *meas, uint16_t index)
     }
 
 
-    if (meas->dataPoints[tempHystIndex0] > currMean && meas->dataPoints[tempHystIndex1] < currMean)
+    if (meas->dataBuffer->dataPtr[tempHystIndex0] > currMean && meas->dataBuffer->dataPtr[tempHystIndex1] < currMean)
     {
         // °°°\...
         // Find the correct index where the passing happens
         for (uint16_t i = tempHystIndex0; i <= tempHystIndex1; i++)
         {
-            if (meas->dataPoints[i] < currMean)
+            if (meas->dataBuffer->dataPtr[i] < currMean)
             {
                 return i;
             }
         }
     }
-    else if (meas->dataPoints[tempHystIndex0] < currMean && meas->dataPoints[tempHystIndex1] > currMean)
+    else if (meas->dataBuffer->dataPtr[tempHystIndex0] < currMean && meas->dataBuffer->dataPtr[tempHystIndex1] > currMean)
     {
         // .../°°°
         for (uint16_t i = tempHystIndex0; i <= tempHystIndex1; i++)
         {
-            if (meas->dataPoints[i] > currMean)
+            if (meas->dataBuffer->dataPtr[i] > currMean)
             {
                 return i;
             }
@@ -110,119 +141,155 @@ static uint16_t weightDataProperty(uint16_t oldVal, uint16_t currVal, uint16_t w
     return currVal;
 }
 
+
+static inline void findMinMax(FFF_Measurement *meas)
+{
+    // Traverse forwards within the bounds we specified
+    meas->maxVal = 0;
+    meas->minVal = 255;
+
+    for (int16_t i = meas->startIndex; i <= meas->endIndex; i++)
+    {
+        evalMinMax(meas, i);
+        evalDiffEdges(meas, i);
+    }
+    
+}
+
+
+static inline void findPassWidth(FFF_Measurement *meas)
+{
+    // First iteration or error
+    if (meas->minIndex < meas->startIndex)
+    {
+        return;
+    }
+    
+    meas->lastLimPass = 0;
+    meas->firstLimPass = 0;
+
+    // Traverse from minIndex to right
+    for (int16_t i = meas->minIndex; (i <= meas->endIndex) && (meas->dataBuffer->dataPtr[i] <= meas->mean); i++)
+    {
+        meas->lastLimPass = i;
+
+        // Error case
+        if (i >= meas->endIndex)
+        {
+            // We didnt find a pass somehow
+            meas->lastLimPass = 0;
+            meas->firstLimPass = 0;
+            Serial.println("E> No pass found!");
+            return;
+        }
+    }
+
+    // Traverse from minIndex to left
+    for (int16_t i = meas->minIndex; (i >= meas->startIndex) && (meas->dataBuffer->dataPtr[i] <= meas->mean); i--)
+    {
+        meas->firstLimPass = i;
+
+        // Error case
+        if (i <= meas->startIndex)
+        {
+            // We didnt find a pass somehow
+            meas->lastLimPass = 0;
+            meas->firstLimPass = 0;
+            Serial.println("E> No pass found!");
+            return;
+        }
+    }
+
+    // Everything went fine, so we can calc the passWdith
+    meas->passWidth = meas->lastLimPass - meas->firstLimPass;
+}
+
+
 void FFF_DiaAn_calcOutput(FFF_Measurement *meas, uint16_t inVal)
 {
     meas->outputVal = meas->scalingCoeff * ((float)inVal);
 }
 
-// TODO: Implement some hysteresis and test this thing with real data
-/* FIXME?: Check if we should base the mean limit passage on the previous mean or on the current!
-        CURRENTLY WE TAKE THE PREVIOUS */
 
 void FFF_DiaAn_analyze(FFF_Measurement *meas)
 {
+    /* Check if analysis was already done */
     if (meas->analyzed)
     {
         return; // Measurement analysis was already done
     }
 
-    if (meas->protectFlag)
-    {
-        return; // Measurement is protected
-    }
-
-    if (!meas->dataPoints)
+    /* Check if the dataBuffer is NULL */
+    if (!meas->dataBuffer)
     {
         return;
     }
 
+    meas->endIndex = meas->dataBuffer->len - LAST_DEAD_PIX;
+    Serial.print("Start:");
+    Serial.println(diameterMeasurement.startIndex);
+    Serial.print("End:");
+    Serial.println(diameterMeasurement.endIndex);
 
-    // uint8_t oldMin = meas->minVal;
-    // uint8_t oldMax = meas->maxVal;
-    // uint16_t oldMinIndex = meas->minIndex;
-    // uint16_t oldMaxIndex = meas->maxIndex;
-    // uint16_t oldFirstLimPass = meas->firstLimPass;
-    // uint16_t oldLastLimPass = meas->lastLimPass;
-    uint16_t oldMean = meas->mean;
-    uint16_t oldPassWidth = meas->passWidth;
-    uint8_t firstPassFound = FALSE;
+    if (!(meas->endIndex > meas->startIndex))
+    {
+        Serial.println("E> Index Error. EI <= SI");
+        Serial.println(meas->endIndex);
+        Serial.println(meas->startIndex);
+        return;
+    }
+
+    /* Check if the definition of the measurement is erroneous */
+    if(meas->maxIndex > meas->dataBuffer->len)
+    {
+        Serial.println("E> Error in measurement definition. Check bounds!");
+        return;
+    }
 
     if (meas->mean <= 0.0)
     {
         // Seems like first iteration
         // So don't take the mean into account
-
-        if (meas->endIndex > meas->startIndex)
-        {
-            // Traverse forwards
-            for (uint16_t i = meas->startIndex; i <= meas->endIndex; i++)
-            {
-                evalMinMax(meas, i);
-            }
-        }
-        else
-        {
-            // Traverse backwards
-            // TODO: Implement if needed
-        }
-
-        meas->mean = (meas->maxVal - meas->minVal) / 2;
+        // Serial.println("First iteration");
+        findMinMax(meas);
+        meas->mean = ((meas->maxVal - meas->minVal) / 2) + meas->minVal;
+        // findPassWidth(meas);
+        meas->passWidth = abs(meas->posEdgeInd - meas->negEdgeInd);
+        FFF_DiaAn_calcOutput(meas, meas->passWidth);
         meas->analyzed = TRUE;
         return;
     }
     else
     {
-        // Consecutive analysis
-        if (meas->endIndex > meas->startIndex)
+        if (MEANFILTER_ACTIVE == true)
         {
-            // Traverse forwards
-            for (uint16_t i = meas->startIndex; i <= meas->endIndex; i++)
-            {
-                uint16_t passIndex = evalLimitPass(meas, i);
-
-                if (passIndex > 0)
-                {
-                    if (!firstPassFound)
-                    {
-                        // First pass was detected
-                        firstPassFound = TRUE;
-                        meas->firstLimPass = passIndex;
-                    }
-                    else
-                    {
-                        // Second pass
-                        meas->lastLimPass = passIndex;
-                    }
-
-                    // A pass was found so jump over the points within the hysteresis
-                    i = passIndex + meas->passHyst;
-                }
-
-                evalMinMax(meas, i);
-            }
+            findMinMax(meas);
+            meas->mean = ((((meas->maxVal - meas->minVal) / 2) + meas->minVal) + (meas->mean * MEANFILTER_WEIGHT_COEFF)) / (MEANFILTER_WEIGHT_COEFF + 1);
+            // findPassWidth(meas);
+            meas->passWidth = abs(meas->posEdgeInd - meas->negEdgeInd);
+            float oldOutVal = meas->outputVal;
+            FFF_DiaAn_calcOutput(meas, meas->passWidth);
+            meas->outputVal = (MEANFILTER_WEIGHT_COEFF * oldOutVal + meas->outputVal) / (MEANFILTER_WEIGHT_COEFF + 1);
+            meas->analyzed = TRUE;
         }
-        else
+        else 
         {
-            // Traverse backwards
-            // TODO: Implement if needed
+            findMinMax(meas);
+            meas->mean = ((meas->maxVal - meas->minVal) / 2) + meas->minVal;
+            meas->passWidth = abs(meas->posEdgeInd - meas->negEdgeInd);
+            // findPassWidth(meas);
+            FFF_DiaAn_calcOutput(meas, meas->passWidth);
+            meas->analyzed = TRUE;
         }
     }
 
-    // Calculate the other parameters
-    if (MEANFILTER_ACTIVE)
-    {
-        // Don't do filtering if mean is zero as this would corrupt the measurement for a few analyzations
-        if (oldMean > 0)
-        {
-            meas->mean = weightDataProperty(oldMean, meas->mean, MEANFILTER_WEIGHT_COEFF);
-            meas->passWidth = weightDataProperty(oldPassWidth, meas->passWidth, MEANFILTER_WEIGHT_COEFF);
-        }
-    }
-    else 
-    {
-        meas->mean = (meas->maxVal - meas->minVal) / 2;
-        meas->passWidth = meas->lastLimPass - meas->firstLimPass;
-    }
+       
+    Serial.print("MaDInd: ");
+    Serial.println(meas->posEdgeInd);
+    Serial.print("MiDInd: ");
+    Serial.println(meas->negEdgeInd);
+    Serial.print("Dia [mm]: ");
+    Serial.println(diameterMeasurement.outputVal);
 
     return;
 }
@@ -240,31 +307,39 @@ TaskHandle_t* FFF_DiaAn_getTaskHandle()
 }
 
 
-
+void FFF_DiaAn_giveBackSemaphoreFromISR()
+{
+    xSemaphoreGiveFromISR(syncUartSemaphore, NULL);
+}
 
 /***************************************/
 /* TASK */
 /***************************************/
 void TASK_handleDiaAnalysis(void* param)
 {
-    // This task will get activated from ISR of UART
+    // This task will get activated from ISR of UART2
+    syncUartSemaphore = xSemaphoreCreateBinary();
     while(1)
     {
-        // After suspension we have to get the current filled up buffer for analysis and protect it
-        FFF_Buffer* bufPtr = FFF_Uart_getFilledBufferUart2();
-
-        if (bufPtr)
+        if (xSemaphoreTake(syncUartSemaphore, portMAX_DELAY) == pdPASS)
         {
-            FFF_Uart_protectBufferUart2(bufPtr);
+            // Serial.println("I>DAN");
+            // After suspension we have to get the current filled up buffer for analysis and protect it
+            FFF_Buffer* bufPtr = FFF_Uart_getFilledBufferUart2();
 
-            Serial.println("ANALYZE FIRED");
-            FFF_Uart_unprotectBufferUart2(bufPtr);
-        } 
-        else 
-        {
-            // Do nothing and wait for the next reactivation
+            if (bufPtr)
+            {
+                FFF_Uart_protectBufferUart2(bufPtr);
+                diameterMeasurement.dataBuffer = bufPtr;
+                diameterMeasurement.analyzed = false;
+                diameterMeasurement.maxIndex = bufPtr->len;
+
+                FFF_DiaAn_analyze(&diameterMeasurement);
+
+
+                FFF_Uart_unprotectBufferUart2(bufPtr);
+                diameterMeasurement.dataBuffer = NULL;
+            } 
         }
-        // Task suspends itself
-        vTaskSuspend(NULL);
     }
 }

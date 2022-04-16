@@ -58,14 +58,15 @@
 /*********************************************************/
 /* ANALYZER */
 /*********************************************************/
+// 1093 PIXs
 #define MEANFILTER_ACTIVE       TRUE
 #define MEANFILTER_WEIGHT_COEFF 10
-#define DIAMETER_SCALING_COEFF  100
-#define MEASUREMENT_LENGTH      2048
-#define FIRST_DEAD_PIX          128
-#define LAST_DEAD_PIX           60
+#define DIAMETER_SCALING_COEFF  1
+#define MEASUREMENT_LENGTH      1100
+#define FIRST_DEAD_PIX          64
+#define LAST_DEAD_PIX           20
 #define SYNC_LENGTH             4
-#define DIA_MEAS_HYST           32
+#define DIA_MEAS_HYST           2
 
 /*********************************************************/
 /* OLED */

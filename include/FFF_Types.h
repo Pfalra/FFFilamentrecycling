@@ -16,6 +16,14 @@
 #define FALSE 0
 #define TRUE 1
 
+typedef struct FFF_Buffer_s
+{
+  uint16_t len;
+  uint8_t* dataPtr;
+  bool protect;
+} FFF_Buffer;
+
+
 typedef enum FFF_PwmResolution_s
 {
   FFF_PWM_RES_1BIT = 1,
@@ -71,11 +79,14 @@ typedef struct FFF_Measurement_s
     uint16_t lastLimPass;
     uint16_t passHyst;
     uint16_t passWidth;
-    uint8_t maxVal;
-    uint8_t minVal;
-    uint8_t analyzed;
-    uint8_t protectFlag;
-    uint8_t* dataPoints;
+    uint16_t maxVal;
+    uint16_t minVal;
+    uint16_t maxPosEdge;
+    int16_t maxNegEdge;
+    uint16_t posEdgeInd;
+    uint16_t negEdgeInd;
+    bool analyzed;
+    FFF_Buffer* dataBuffer;
 } FFF_Measurement;
 
 
@@ -119,11 +130,5 @@ typedef struct FFF_Log_s
 } FFF_Log;
 
 
-typedef struct FFF_Buffer_s
-{
-  uint16_t len;
-  uint8_t* dataPtr;
-  bool protect;
-} FFF_Buffer;
 
 #endif
