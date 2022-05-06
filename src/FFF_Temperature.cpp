@@ -11,7 +11,7 @@ TaskHandle_t TemperatureReadTaskHandle;
 /******************************************/
 /* GLOBAL TEMPERATURES  */
 /******************************************/
-double hotendTemperature = 0.0;
+double hotendTemperature = 0.00;
 
 
 /******************************************/
@@ -295,21 +295,21 @@ void TASK_handleTemperature(void *param)
     Serial.print("I> ADC raw: ");
     Serial.println(adcRawRead, 4);
     Serial.print("I> TH0: ");
-    Serial.print(hotendTemp, 1);
+    Serial.print(hotendTemperature, 1);
     Serial.println(" deg C");
     Serial.print("DeltaT: ");
     Serial.println(diff, 4);
 #endif
 
-    if (diff > MAX_TEMP_DELTA_DEG)
-    {
-      // Some erroneous reading so take the previous
-      hotendTemperature = oldTemp; 
-    } 
-    else 
-    {
-      oldTemp = hotendTemperature;
-    }
+    // if (diff > MAX_TEMP_DELTA_DEG)
+    // {
+    //   // Some erroneous reading so take the previous
+    //   hotendTemperature = oldTemp; 
+    // } 
+    // else 
+    // {
+    //   oldTemp = hotendTemperature;
+    // }
     vTaskDelay(ADC_SAMPLE_INTERVAL_MS);
   }
 }

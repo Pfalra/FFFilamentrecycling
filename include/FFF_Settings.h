@@ -39,7 +39,7 @@
 /*********************************************************/
 /* PWM */
 /*********************************************************/
-#define PWM_HEATER_FREQUENCY    2500
+#define PWM_HEATER_FREQUENCY    5000
 
 
 
@@ -130,7 +130,7 @@
 #define THERMISTOR_PULL_UP_VAL 4700.0f
 #define STEPPER_MICROSTEPS  16
 
-#define HEATER_OUTPUT_PIN   33
+// #define HEATER_OUTPUT_PIN   33
 #define RX_TO_FPGA_PIN      16
 #define TX_TO_FPGA_PIN      17
 #define OLED_SCL_PIN        22
@@ -139,10 +139,7 @@
 #define EXTRUDER_STEP_PIN   26
 #define PULLER_STEP_PIN     25
 #define WINCH_STEP_PIN      33
-#define SPI_SCK_PIN         14
-#define SPI_CS_PIN_SD       15
-#define SPI_MISO_PIN        12
-#define SPI_MOSI_PIN        13
+#define HEATER_OUTPUT_PIN   14
 #define EMERGENCY_BUTTON_PIN 36
 
 

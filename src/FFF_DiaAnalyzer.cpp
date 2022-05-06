@@ -11,7 +11,7 @@ SemaphoreHandle_t syncUartSemaphore = NULL;
 TaskHandle_t DiaReadTaskHandle;
 
 bool diaBuffer0Ready = false;
-bool diaBuffer1Ready = false;
+// bool diaBuffer1Ready = false;
 
 uint8_t diaMeasPoints[MEASUREMENT_LENGTH];
 
@@ -317,29 +317,50 @@ void FFF_DiaAn_giveBackSemaphoreFromISR()
 /***************************************/
 void TASK_handleDiaAnalysis(void* param)
 {
-    // This task will get activated from ISR of UART2
-    syncUartSemaphore = xSemaphoreCreateBinary();
+
     while(1)
     {
-        if (xSemaphoreTake(syncUartSemaphore, portMAX_DELAY) == pdPASS)
+        if (diaBuffer0Ready)
         {
-            // Serial.println("I>DAN");
-            // After suspension we have to get the current filled up buffer for analysis and protect it
+            diaBuffer0Ready = false;
             FFF_Buffer* bufPtr = FFF_Uart_getFilledBufferUart2();
 
             if (bufPtr)
             {
-                FFF_Uart_protectBufferUart2(bufPtr);
                 diameterMeasurement.dataBuffer = bufPtr;
                 diameterMeasurement.analyzed = false;
                 diameterMeasurement.maxIndex = bufPtr->len;
-
                 FFF_DiaAn_analyze(&diameterMeasurement);
-
-
-                FFF_Uart_unprotectBufferUart2(bufPtr);
                 diameterMeasurement.dataBuffer = NULL;
-            } 
+            }
         }
+
+        vTaskDelay(FPGA_CALCULATE_DIAMETER_INTERVAL_MS);
     }
+
+    // // This task will get activated from ISR of UART2
+    // syncUartSemaphore = xSemaphoreCreateBinary();
+    // while(1)
+    // {
+    //     if (xSemaphoreTake(syncUartSemaphore, portMAX_DELAY) == pdPASS)
+    //     {
+    //         // Serial.println("I>DAN");
+    //         // After suspension we have to get the current filled up buffer for analysis and protect it
+    //         FFF_Buffer* bufPtr = FFF_Uart_getFilledBufferUart2();
+
+    //         if (bufPtr)
+    //         {
+    //             FFF_Uart_protectBufferUart2(bufPtr);
+    //             diameterMeasurement.dataBuffer = bufPtr;
+    //             diameterMeasurement.analyzed = false;
+    //             diameterMeasurement.maxIndex = bufPtr->len;
+
+    //             FFF_DiaAn_analyze(&diameterMeasurement);
+
+
+    //             FFF_Uart_unprotectBufferUart2(bufPtr);
+    //             diameterMeasurement.dataBuffer = NULL;
+    //         } 
+    //     }
+    // }
 }

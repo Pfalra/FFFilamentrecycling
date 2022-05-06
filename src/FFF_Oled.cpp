@@ -147,7 +147,7 @@ void FFF_Oled_updateDisplay()
         oled.println(tmpStr);
 #if DEBUG_OLED == TRUE
         Serial.print("Display showing: ");
-        Serial.println(lineArr[i]->chars);
+        Serial.println(tmpStr);
 #endif
     }
 
@@ -171,7 +171,8 @@ void TASK_handleOled(void* param)
 {
     while(1)
     {
-        FFF_Oled_clearDisplay();
+        // Serial.println("OLED fired");
+        // Serial.println(FFF_Temp_getTemperature());
         FFF_Oled_updateExtruderMotSpeed(FFF_Stepper_getExtruderStepperSpeed());
         FFF_Oled_updatePullMotSpeed(FFF_Stepper_getPullStepperSpeed());
         FFF_Oled_updateTemperature(FFF_Temp_getTemperature());

@@ -19,7 +19,7 @@ uint16_t u2rxLen = 0;
 TaskHandle_t UartFpgaTaskHandle;
 
 uint8_t uart2Buf0[MEASUREMENT_LENGTH + SYNC_LENGTH];
-uint8_t uart2Buf1[MEASUREMENT_LENGTH + SYNC_LENGTH];
+// uint8_t uart2Buf1[MEASUREMENT_LENGTH + SYNC_LENGTH];
 
 FFF_Buffer FFF_Buf_uart2_data0 = 
 {
@@ -28,11 +28,11 @@ FFF_Buffer FFF_Buf_uart2_data0 =
 };
 
 
-FFF_Buffer FFF_Buf_uart2_data1 = 
-{
-  .len = 0,
-  .dataPtr = uart2Buf1
-};
+// FFF_Buffer FFF_Buf_uart2_data1 = 
+// {
+//   .len = 0,
+//   .dataPtr = uart2Buf1
+// };
 
 
 FFF_Buffer* activeBufPtr = &FFF_Buf_uart2_data0;
@@ -159,17 +159,17 @@ bool IRAM_ATTR checkSync()
 }
 
 
-void IRAM_ATTR switchActiveBuffer()
-{
-  if (activeBufPtr == &FFF_Buf_uart2_data0)
-  {
-    activeBufPtr = &FFF_Buf_uart2_data1;
-  }
-  else 
-  {
-    activeBufPtr = &FFF_Buf_uart2_data0;
-  }
-}
+// void IRAM_ATTR switchActiveBuffer()
+// {
+//   if (activeBufPtr == &FFF_Buf_uart2_data0)
+//   {
+//     activeBufPtr = &FFF_Buf_uart2_data1;
+//   }
+//   else 
+//   {
+//     activeBufPtr = &FFF_Buf_uart2_data0;
+//   }
+// }
 
 /*************************************************/
 /* INTERRUPT HANDLER */
@@ -209,9 +209,9 @@ static void IRAM_ATTR uart2_isr_handler(void *arg)
         {
           activeBufPtr->len -= SYNC_LENGTH;
           // Task will retrieve the filled buffer via a getter
-          FFF_DiaAn_giveBackSemaphoreFromISR();
-          // Serial.print('T');
-          switchActiveBuffer();
+          // FFF_DiaAn_giveBackSemaphoreFromISR();
+          // // Serial.print('T');
+          // switchActiveBuffer();
         }
         else 
         {
@@ -261,22 +261,22 @@ FFF_Buffer* FFF_Uart_getCurrentBufferUart2()
 FFF_Buffer* FFF_Uart_getFilledBufferUart2()
 {
   FFF_Buffer* retBufPtr;
-  if (activeBufPtr == &FFF_Buf_uart2_data0)
-  {
-    retBufPtr = &FFF_Buf_uart2_data1;
-  }
+  // if (activeBufPtr == &FFF_Buf_uart2_data0)
+  // {
+  //   retBufPtr = &FFF_Buf_uart2_data1;
+  // }
 
-  retBufPtr = &FFF_Buf_uart2_data0;
+  // retBufPtr = &FFF_Buf_uart2_data0;
 
 
-  if (retBufPtr->protect)
-  {
-    return NULL;
-  }
-  else 
-  {
-    return retBufPtr;
-  }
+  // if (retBufPtr->protect)
+  // {
+  //   return NULL;
+  // }
+  // else 
+  // {
+     return retBufPtr = &FFF_Buf_uart2_data0;
+  // }
 }
 
 

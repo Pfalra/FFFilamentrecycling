@@ -47,7 +47,7 @@ FFF_Stepper pullStepper =
 
 FFF_PwmHandle winchPwm = 
 {
-  1,                  // id
+  2,                  // id
   PULLER_STEP_PIN,    // outputPin
   0,                  // channel
   FFF_PWM_RES_1BIT,   // resolution

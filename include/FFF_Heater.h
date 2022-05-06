@@ -3,9 +3,9 @@
 
 #include <stdint.h>
 
-void FFF_Heater_init();
+void FFF_Heater_startHeating();
 
-void FFF_Heater_heat(double dutycycle);
+void FFF_Heater_changeHeatDC(double dutycycle);
 
 void FFF_Heater_stop();
 

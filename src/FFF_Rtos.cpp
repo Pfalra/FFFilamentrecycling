@@ -195,6 +195,11 @@ void TASK_mainControlApp()
 void FFF_Rtos_startApp()
 {
   FFF_Uart_activateInterruptRX_Uart2();
+  FFF_Stepper_enableAll();
+  FFF_Stepper_runStepsPerSecond(&winchStepper, 50);
+  FFF_Stepper_runStepsPerSecond(&extruderStepper, 50);
+  FFF_Stepper_runStepsPerSecond(&pullStepper, 50);
+  FFF_Heater_changeHeatDC(75.00f);
   startApp = true;
 }
 
@@ -205,6 +210,7 @@ void FFF_Rtos_stopApp()
   {
     FFF_Uart_deactivateInterruptRX_Uart2();
     stopApp = true;
+    FFF_Heater_stop();
   }
 }
 

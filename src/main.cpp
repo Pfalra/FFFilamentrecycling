@@ -23,6 +23,7 @@
 #include <FFF_Uart.h>
 #include <FFF_Pid.h>
 #include <FFF_WiFi.h>
+#include <FFF_Heater.h>
 
 const char paramArr[] = "TEMP" DELIMITER \
               "DIAMETER" DELIMITER \
@@ -35,9 +36,14 @@ void setup()
   Serial.println();
   Serial.println("FFF Device starting up...");
 
+
   /* Initialize WiFi */
   FFF_WiFi_init();
-  
+
+  /* Heater init */
+  Serial.println(NL "I>Initializing Heater");
+  FFF_Heater_startHeating();
+
   /* Initialize OLED */
   FFF_Oled_init();
   delay(200);
@@ -53,8 +59,7 @@ void setup()
   /* Initialize the PID control */
   Serial.println(NL "I>Initializing PID control");
   FFF_Pid_init();
-
-
+  
   /* Create tasks for initialization */
   Serial.println(NL "Starting InitTasks");
   FFF_Rtos_StartOS();

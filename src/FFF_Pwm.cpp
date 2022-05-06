@@ -8,7 +8,10 @@ void FFF_Pwm_init(FFF_PwmHandle* handle)
 {
     pinMode(handle->outputPin, OUTPUT);
     digitalWrite(handle->outputPin, LOW);
-    ledcSetup(handle->channel, handle->freq, handle->resolution);
+    Serial.print("LEDC Setup for ");
+    Serial.print(handle->id);
+    Serial.print(" returned: ");
+    Serial.println(ledcSetup(handle->channel, handle->freq, handle->resolution));
     ledcAttachPin(handle->outputPin, handle->channel);
     ledcWrite(handle->channel, 0);
 }
@@ -28,13 +31,15 @@ void FFF_Pwm_changeDutyCycle(FFF_PwmHandle* handle)
 
 void FFF_Pwm_startOutput(FFF_PwmHandle* handle)
 {
-    if (handle->dutyCycle > 100.0)
+    if (handle->dutyCycle > 100.0f)
     {
-        handle->dutyCycle = 100.0; // Clip it
+        handle->dutyCycle = 100.0f; // Clip it
     }
 
     double percFac = handle->dutyCycle / 100.0f;
-    uint32_t llDuty = percFac * UINT32_MAX;
+    uint32_t llDuty = percFac * (1 << handle->resolution);
+
+    Serial.printf("LLDuty: %d @ %d\n", llDuty, handle->resolution);
     ledcWrite(handle->channel, llDuty);
 }
 
